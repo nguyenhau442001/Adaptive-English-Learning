@@ -58,6 +58,11 @@ comment on column words.meanings is
 -- this only guards exact-string duplicates.
 create unique index words_term_key on words (lower(term));
 
+create trigger words_set_updated_at
+  before update on words
+  for each row
+  execute function extensions.moddatetime(updated_at);
+
 -- ============================================================================
 -- word_tags
 -- ============================================================================
