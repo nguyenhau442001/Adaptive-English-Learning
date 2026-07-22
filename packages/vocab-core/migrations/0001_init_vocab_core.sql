@@ -158,3 +158,58 @@ create trigger user_progress_set_updated_at
   before update on user_progress
   for each row
   execute function extensions.moddatetime(updated_at);
+
+-- ============================================================================
+-- Row Level Security
+-- ============================================================================
+-- Supabase exposes every table over PostgREST to the `anon`/`authenticated`
+-- JWT roles by default. Without RLS, any authenticated client could read or
+-- write any other user's SRS state. Content tables (exam_profiles, words,
+-- word_tags) are shared reference data: readable by any authenticated user,
+-- writable only by the service role (content import/admin tooling bypasses
+-- RLS via the service key, so no explicit write policy is needed for them).
+
+alter table exam_profiles enable row level security;
+alter table words         enable row level security;
+alter table word_tags     enable row level security;
+alter table user_progress enable row level security;
+
+create policy exam_profiles_select_authenticated on exam_profiles
+  for select
+  to authenticated
+  using (true);
+
+create policy words_select_authenticated on words
+  for select
+  to authenticated
+  using (true);
+
+create policy word_tags_select_authenticated on word_tags
+  for select
+  to authenticated
+  using (true);
+
+-- user_progress is private per-user data: a user may only see and modify
+-- their own SRS rows. This is the enforcement backstop for the same
+-- exam-scoping principle the schema itself encodes — even if application
+-- code has a bug, the database will not leak or accept writes across users.
+create policy user_progress_select_own on user_progress
+  for select
+  to authenticated
+  using (auth.uid() = user_id);
+
+create policy user_progress_insert_own on user_progress
+  for insert
+  to authenticated
+  with check (auth.uid() = user_id);
+
+create policy user_progress_update_own on user_progress
+  for update
+  to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create policy user_progress_delete_own on user_progress
+  for delete
+  to authenticated
+  using (auth.uid() = user_id);
