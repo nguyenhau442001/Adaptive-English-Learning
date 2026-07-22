@@ -1,7 +1,7 @@
 -- 0001_init_vocab_core.sql
 -- Vocab Core schema: exam_profiles, words, word_tags, user_progress.
 --
--- Architecture principles this schema enforces (see docs/architecture.md):
+-- Architecture principles this schema enforces:
 --   1. No linear curriculum. SRS only queues words the user actually got wrong.
 --   2. Word (exam-agnostic) is separated from WordTag (exam-specific linkage).
 --   3. Adding a new exam (e.g. IELTS) = inserting a new exam_profiles row +
