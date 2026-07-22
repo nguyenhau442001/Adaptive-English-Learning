@@ -44,6 +44,7 @@ create table words (
   meanings        jsonb not null default '[]',   -- [{ pos, definition, translation? }, ...]
   examples        jsonb not null default '[]',   -- [{ sentence, translation? }, ...]
   audio_url       text,
+  is_active       boolean not null default true, -- soft-delete flag; see note on user_progress.word_id FK below
   created_at      timestamptz not null default now(),
   updated_at      timestamptz not null default now()
 );
@@ -103,7 +104,13 @@ create index word_tags_exam_id_idx on word_tags (exam_id);
 create table user_progress (
   id               uuid primary key default gen_random_uuid(),
   user_id          uuid not null references auth.users(id) on delete cascade,
-  word_id          uuid not null references words(id) on delete cascade,
+  -- on delete restrict (not cascade): unlike word_tags, this table holds
+  -- irreplaceable per-user learning history (lapses, repetitions, interval).
+  -- A word must be soft-deleted (words.is_active = false) rather than
+  -- hard-deleted while any user_progress rows still reference it, so that
+  -- deleting/deduping dictionary content can never silently wipe a user's
+  -- SRS history.
+  word_id          uuid not null references words(id) on delete restrict,
   exam_id          uuid not null references exam_profiles(id) on delete cascade,
 
   -- Onboarding "quick scan" gate: a word only enters real SRS scheduling
