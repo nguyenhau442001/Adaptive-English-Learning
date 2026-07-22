@@ -10,8 +10,8 @@
 --   4. UserProgress (SRS state) is scoped per exam_id — mastery in TOEIC
 --      does not imply mastery in IELTS for the same word.
 
--- Required for gen_random_uuid() and the updated_at trigger helper below.
-create extension if not exists pgcrypto;
+-- gen_random_uuid() is built into Postgres 13+ (what Supabase runs) and does
+-- NOT require pgcrypto. moddatetime supplies the updated_at trigger helper below.
 create extension if not exists moddatetime schema extensions;
 
 -- ============================================================================
