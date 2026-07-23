@@ -4,6 +4,7 @@ import { getActiveExam } from '@/lib/data/exam';
 import { getAnthropicClient, GRADING_MODEL } from '@/lib/anthropic';
 
 interface RubricScores {
+  [key: string]: number;
   pronunciation: number;
   intonation: number;
   grammar: number;
