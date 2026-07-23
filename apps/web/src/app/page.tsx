@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { requireUser } from '@/lib/auth';
 import { getActiveExamOrNull } from '@/lib/data/exam';
-import { signOut } from '@/app/login/actions';
 import { SeedContentButton } from './seed-content-button';
 
 const NAV_LINKS = [
@@ -23,16 +22,9 @@ export default async function DashboardPage() {
   if (!exam) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-10">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold">Adaptive English Learning</h1>
-            <p className="text-sm text-neutral-500">TOEIC prep — band 990 target.</p>
-          </div>
-          <form action={signOut}>
-            <button type="submit" className="text-sm text-neutral-500 underline">
-              Sign out
-            </button>
-          </form>
+        <div className="mb-8">
+          <h1 className="text-2xl font-semibold">Adaptive English Learning</h1>
+          <p className="text-sm text-neutral-500">TOEIC prep — band 990 target.</p>
         </div>
         <SeedContentButton />
       </div>
@@ -64,16 +56,9 @@ export default async function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Adaptive English Learning</h1>
-          <p className="text-sm text-neutral-500">{exam.name} prep — band 990 target.</p>
-        </div>
-        <form action={signOut}>
-          <button type="submit" className="text-sm text-neutral-500 underline">
-            Sign out
-          </button>
-        </form>
+      <div className="mb-8">
+        <h1 className="text-2xl font-semibold">Adaptive English Learning</h1>
+        <p className="text-sm text-neutral-500">{exam.name} prep — band 990 target.</p>
       </div>
 
       <section className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
