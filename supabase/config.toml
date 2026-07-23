@@ -1,0 +1,11 @@
+# Minimal marker file so the Supabase CLI (`supabase link`, `supabase db push`)
+# recognizes this directory as a linked project. `supabase/migrations` is a
+# symlink to packages/vocab-core/migrations — the SQL files live in one place
+# (per the architecture doc) but are also where the CLI expects them.
+#
+# Run `supabase link --project-ref <your-project-ref>` after `supabase login`;
+# that command will fill in/validate this file against your real project. If
+# the CLI complains this file is incomplete for your installed CLI version,
+# run `supabase init` once (it will not touch the migrations symlink) and
+# re-link.
+project_id = "adaptive-english-learning"
