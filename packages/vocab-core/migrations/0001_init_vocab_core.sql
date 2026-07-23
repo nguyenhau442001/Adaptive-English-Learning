@@ -72,6 +72,11 @@ create trigger words_set_updated_at
 -- exams never require touching the words table.
 create table word_tags (
   id                  uuid primary key default gen_random_uuid(),
+  -- on delete cascade (unlike user_progress.word_id): word_tags is imported
+  -- reference/content metadata, not irreplaceable user history, so it's fine
+  -- for a word's tags to disappear along with the word. Deliberately not
+  -- switched to restrict — see the on delete restrict note on
+  -- user_progress.word_id below for the case where that distinction matters.
   word_id             uuid not null references words(id) on delete cascade,
   exam_id             uuid not null references exam_profiles(id) on delete cascade,
   skill               text not null,   -- 'vocab' | 'grammar' | 'collocation' (validated at app/exam-profile level, not DB enum — different exams may add skills without a migration)
