@@ -33,6 +33,10 @@ export function SpeakingPractice() {
   } | null>(null);
 
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  // Web Speech API's per-result confidence is the only pronunciation-clarity
+  // signal available without a paid ASR/AI service — averaged across final
+  // results and sent along with the transcript. See lib/text-metrics.ts.
+  const confidenceRef = useRef<number[]>([]);
   const task = SPEAKING_TASKS[taskIndex];
 
   function startRecording() {
@@ -46,6 +50,7 @@ export function SpeakingPractice() {
 
     setTranscript('');
     setResult(null);
+    confidenceRef.current = [];
 
     const recognition = new SpeechRecognitionCtor();
     recognition.lang = 'en-US';
@@ -54,10 +59,16 @@ export function SpeakingPractice() {
 
     recognition.onresult = (event) => {
       let finalText = '';
+      const confidences: number[] = [];
       for (let i = 0; i < event.results.length; i++) {
-        finalText += event.results[i][0].transcript + ' ';
+        const item = event.results[i][0];
+        finalText += item.transcript + ' ';
+        if (event.results[i].isFinal && typeof item.confidence === 'number') {
+          confidences.push(item.confidence);
+        }
       }
       setTranscript(finalText.trim());
+      confidenceRef.current = confidences;
     };
 
     recognition.onerror = () => setRecording(false);
@@ -76,10 +87,21 @@ export function SpeakingPractice() {
   async function submitForGrading() {
     setGrading(true);
     try {
+      const confidences = confidenceRef.current;
+      const avgConfidence =
+        confidences.length > 0
+          ? confidences.reduce((sum, c) => sum + c, 0) / confidences.length
+          : null;
+
       const res = await fetch('/api/speaking/grade', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ taskType: task.type, prompt: task.prompt, transcript }),
+        body: JSON.stringify({
+          taskType: task.type,
+          prompt: task.prompt,
+          transcript,
+          confidence: avgConfidence,
+        }),
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);

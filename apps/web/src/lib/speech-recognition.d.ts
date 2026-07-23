@@ -2,6 +2,7 @@
 // Only the surface this app actually uses.
 interface SpeechRecognitionResultItem {
   transcript: string;
+  confidence: number;
 }
 
 interface SpeechRecognitionResultList {

@@ -42,7 +42,8 @@ export async function submitAnswer(
       choices: string[];
     };
 
-    const { errorType, note } = await classifyError({
+    const { errorType, note } = classifyError({
+      questionType: question.question_type,
       questionText: content.questionText,
       passage: content.passage,
       choices: content.choices,
