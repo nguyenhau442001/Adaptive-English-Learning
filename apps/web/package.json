@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@aelearning/exam-profile-toeic": "*",
     "@aelearning/vocab-core": "*",
     "@anthropic-ai/sdk": "^0.113.0",
     "@supabase/ssr": "^0.12.3",
