@@ -56,8 +56,11 @@ comment on column words.meanings is
 
 -- Prevent literal duplicate headwords from silently proliferating; term
 -- variants (e.g. "accommodate" vs "accommodation") are still separate rows,
--- this only guards exact-string duplicates.
-create unique index words_term_key on words (lower(term));
+-- this only guards exact-string duplicates. A plain column constraint (not
+-- a lower(term) functional index) so seed upserts can target it via
+-- ON CONFLICT (term) — PostgREST's onConflict can only reference literal
+-- indexed columns, not expressions.
+alter table words add constraint words_term_key unique (term);
 
 create trigger words_set_updated_at
   before update on words

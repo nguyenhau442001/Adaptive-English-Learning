@@ -71,7 +71,6 @@ async function main() {
         skill: seed.skill,
         context: seed.context,
         difficulty_for_exam: seed.difficultyForExam,
-        source: 'seed-v1',
       },
       { onConflict: 'word_id,exam_id,skill,context' }
     );
