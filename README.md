@@ -6,62 +6,56 @@ mistakes get tagged by the specific trap that caused them (a Weakness Map, not a
 Speaking/Writing get rubric feedback. Architecture is exam-agnostic so IELTS can be added later as
 a data import, not a rewrite (see `docs/architecture.md`).
 
-**Fully free to run.** Supabase's free tier covers Postgres + Auth. Speaking/Writing grading and
-Listening/Reading error classification are rule-based heuristics (see
-`apps/web/src/lib/text-metrics.ts`) — no paid AI API is called anywhere in this app.
+**Fully free to run.** Supabase's free tier covers Postgres + Auth, and Vercel's free tier covers
+hosting. Speaking/Writing grading and Listening/Reading error classification are rule-based
+heuristics (see `apps/web/src/lib/text-metrics.ts`) — no paid AI API is called anywhere in this
+app.
 
-## Prerequisites
+## Option A — one-click launch, no terminal (recommended)
 
-- Node.js 22+ (the `@supabase/supabase-js` version pinned here warns on Node 20 and below; it
-  still runs on 20, but 22 avoids the warning).
-- A free [Supabase](https://supabase.com) project.
-- Optionally the [Supabase CLI](https://supabase.com/docs/guides/cli) for `supabase db push`; if
-  you'd rather not install it, you can paste the migration SQL into the Supabase dashboard's SQL
-  Editor instead (see below).
+Two one-time setup steps in your browser, then a permanent link you just open.
 
-## Setup
+1. **Create a free Supabase project**: go to [supabase.com](https://supabase.com) → New Project.
+   Once it's created, open **Project Settings → API** and keep that tab open — you'll copy 3
+   values from it in the next step.
 
-1. **Install dependencies** (from the repo root):
-   ```bash
-   npm install
-   ```
+2. **Create the database tables**: in your Supabase project, open the **SQL Editor** (left
+   sidebar) → New query. Paste in the contents of
+   [`packages/vocab-core/migrations/0001_init_vocab_core.sql`](packages/vocab-core/migrations/0001_init_vocab_core.sql)
+   and click Run. Repeat for
+   [`0002_practice_and_weakness.sql`](packages/vocab-core/migrations/0002_practice_and_weakness.sql).
 
-2. **Create a Supabase project**, then copy `.env.example` to `.env` at the repo root and fill in
-   the three values from Project Settings → API:
-   ```bash
-   cp .env.example .env
-   ```
-   `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`. One
-   root `.env` is read by both the Next.js app and the seed script — see the comments in
-   `.env.example`.
+3. **Deploy the app** — click this button:
 
-3. **Run the migrations** to create the schema (`exam_profiles`, `words`, `word_tags`,
-   `user_progress`, `questions`, `weakness_logs`, `speaking_attempts`, `writing_attempts` — all
-   defined in `packages/vocab-core/migrations/`):
+   [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnguyenhau442001%2FAdaptive-English-Learning&root-directory=apps%2Fweb&env=NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,SUPABASE_SERVICE_ROLE_KEY&envDescription=From%20your%20Supabase%20project%27s%20Settings%20%E2%86%92%20API%20page&envLink=https%3A%2F%2Fsupabase.com%2Fdashboard%2Fproject%2F_%2Fsettings%2Fapi&project-name=adaptive-english-learning&repository-name=adaptive-english-learning)
 
-   - With the Supabase CLI:
-     ```bash
-     supabase login
-     supabase link --project-ref <your-project-ref>
-     supabase db push
-     ```
-     (`supabase/migrations` is a symlink to `packages/vocab-core/migrations`, so the CLI picks up
-     the same files the repo documents as canonical.)
-   - Without the CLI: open your project's SQL Editor in the Supabase dashboard and run
-     `packages/vocab-core/migrations/0001_init_vocab_core.sql` then
-     `packages/vocab-core/migrations/0002_practice_and_weakness.sql`, in that order.
+   It'll ask you to log in with GitHub, then paste in the 3 values from the Supabase API page
+   (`Project URL`, `anon public` key, `service_role` key). Click Deploy and wait ~2 minutes.
+   *(This button wasn't tested against a real Vercel account from here — if importing the repo
+   doesn't correctly detect `apps/web` as the app, manually set "Root Directory" to `apps/web` in
+   the import screen before deploying.)*
 
-4. **Seed TOEIC content** (314 high-band vocab words + a handful of sample ETS-style questions):
-   ```bash
-   npm run seed:toeic
-   ```
+4. **Open your new URL**, sign up with any email/password, and on the dashboard click
+   **"Load starter content"** once (loads 314 words + sample questions — no terminal, just a
+   button in the app). That's it — bookmark the URL, it's permanent.
 
-5. **Run the app**:
-   ```bash
-   npm run dev
-   ```
-   Open [http://localhost:3000](http://localhost:3000), sign up with any email/password (Supabase
-   Auth), and you'll land in onboarding.
+## Option B — run on your own machine (for developers)
+
+- Node.js 22+ (the pinned `@supabase/supabase-js` version warns on Node 20 and below; still runs,
+  just noisy).
+- A free [Supabase](https://supabase.com) project (steps 1-2 from Option A above).
+- Optionally the [Supabase CLI](https://supabase.com/docs/guides/cli) instead of the SQL Editor.
+
+```bash
+npm install
+cp .env.example .env   # fill in the 3 Supabase values, see comments in the file
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000), sign up, and click "Load starter content" on
+the dashboard — same one-click seeding as Option A, no `npm run seed:toeic` needed either way
+(that CLI script still exists and works if you prefer it — see `.env.example`'s comments — but
+isn't required).
 
 ## What's mock/demo data
 
