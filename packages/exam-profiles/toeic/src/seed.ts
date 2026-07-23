@@ -6,8 +6,18 @@
 // a data import, not a schema/code change. Adding IELTS later means writing
 // a sibling packages/exam-profiles/ielts/src/seed.ts that inserts its own
 // exam_profiles row and word_tags — this file is never touched.
-import 'dotenv/config';
+// `npm run seed --workspace=...` (how the root `seed:toeic` script invokes
+// this) runs with cwd set to this package's own directory, not the repo
+// root, so plain `dotenv/config` would look for a .env next to this file
+// and miss the repo-root one. Resolve the path explicitly instead so a
+// single root .env works regardless of how this script is invoked.
+import { config as loadEnv } from 'dotenv';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 import { createClient } from '@supabase/supabase-js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+loadEnv({ path: path.resolve(__dirname, '../../../../.env') });
 import { toeicWordSeeds } from '../data/words.seed';
 import { toeicQuestionSeeds } from '../data/questions.seed';
 
