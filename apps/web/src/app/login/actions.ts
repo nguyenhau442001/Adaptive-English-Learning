@@ -26,7 +26,10 @@ export async function signUp(formData: FormData) {
   if (error) {
     redirect(`/login?error=${encodeURIComponent(error.message)}`);
   }
-  redirect('/onboarding');
+  // Not straight to /onboarding: on a fresh Supabase project there's no
+  // seeded content yet, and the dashboard is where the one-click "load
+  // starter content" button lives.
+  redirect('/');
 }
 
 export async function signOut() {

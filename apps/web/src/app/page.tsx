@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { requireUser } from '@/lib/auth';
-import { getActiveExam } from '@/lib/data/exam';
+import { getActiveExamOrNull } from '@/lib/data/exam';
 import { signOut } from '@/app/login/actions';
+import { SeedContentButton } from './seed-content-button';
 
 const NAV_LINKS = [
   { href: '/onboarding', label: 'Onboarding scan', desc: 'Bulk-mark words you already know' },
@@ -17,7 +18,26 @@ const NAV_LINKS = [
 export default async function DashboardPage() {
   const user = await requireUser();
   const supabase = await createClient();
-  const exam = await getActiveExam(supabase);
+  const exam = await getActiveExamOrNull(supabase);
+
+  if (!exam) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-10">
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold">Adaptive English Learning</h1>
+            <p className="text-sm text-neutral-500">TOEIC prep — band 990 target.</p>
+          </div>
+          <form action={signOut}>
+            <button type="submit" className="text-sm text-neutral-500 underline">
+              Sign out
+            </button>
+          </form>
+        </div>
+        <SeedContentButton />
+      </div>
+    );
+  }
 
   // Total distinct words tagged for this exam (dedupe in JS since a word can
   // carry multiple word_tags rows — same pattern as onboarding/page.tsx).
