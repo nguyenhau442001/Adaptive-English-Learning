@@ -53,6 +53,35 @@ export function MockTestSession({
   const questions = section === 'listening' ? listening : reading;
   const current = questions[index];
 
+  async function finishTest() {
+    setSubmitting(true);
+    const allQuestions = [...listening, ...reading];
+    let correct = 0;
+    for (const q of allQuestions) {
+      const userAnswer = answers[q.id];
+      if (!userAnswer) continue;
+      const res = await submitAnswer(q.id, userAnswer);
+      if (res.correct) correct++;
+    }
+    setResults({ correct, total: allQuestions.length });
+    setSubmitting(false);
+    setSection('done');
+  }
+
+  function advanceSection() {
+    if (section === 'listening') {
+      if (reading.length > 0) {
+        setSection('reading');
+        setIndex(0);
+        setSecondsLeft(READING_SECONDS);
+      } else {
+        finishTest();
+      }
+    } else {
+      finishTest();
+    }
+  }
+
   // Timed sections: real countdown, auto-advances section on timeout.
   // Full-timing mock per the product brief (L 45' / R 75'), not per-question
   // timing — matches how the real TOEIC is administered.
@@ -72,20 +101,6 @@ export function MockTestSession({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [section]);
 
-  function advanceSection() {
-    if (section === 'listening') {
-      if (reading.length > 0) {
-        setSection('reading');
-        setIndex(0);
-        setSecondsLeft(READING_SECONDS);
-      } else {
-        finishTest();
-      }
-    } else {
-      finishTest();
-    }
-  }
-
   function selectAnswer(choice: string) {
     if (!current) return;
     setAnswers((prev) => ({ ...prev, [current.id]: choice }));
@@ -97,21 +112,6 @@ export function MockTestSession({
     } else {
       advanceSection();
     }
-  }
-
-  async function finishTest() {
-    setSubmitting(true);
-    const allQuestions = [...listening, ...reading];
-    let correct = 0;
-    for (const q of allQuestions) {
-      const userAnswer = answers[q.id];
-      if (!userAnswer) continue;
-      const res = await submitAnswer(q.id, userAnswer);
-      if (res.correct) correct++;
-    }
-    setResults({ correct, total: allQuestions.length });
-    setSubmitting(false);
-    setSection('done');
   }
 
   const allAnswered = useMemo(() => questions.every((q) => answers[q.id]), [questions, answers]);
