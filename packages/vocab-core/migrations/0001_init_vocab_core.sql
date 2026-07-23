@@ -173,6 +173,11 @@ create trigger user_progress_set_updated_at
 -- word_tags) are shared reference data: readable by any authenticated user,
 -- writable only by the service role (content import/admin tooling bypasses
 -- RLS via the service key, so no explicit write policy is needed for them).
+--
+-- `anon` (not-logged-in) gets no policies anywhere on purpose: this is a
+-- personal-use app with no public/pre-login browsing surface today. If a
+-- public marketing/preview page is added later, add an explicit
+-- `to anon using (true)` select policy on the relevant content table then.
 
 alter table exam_profiles enable row level security;
 alter table words         enable row level security;
