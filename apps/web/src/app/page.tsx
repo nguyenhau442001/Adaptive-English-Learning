@@ -44,7 +44,8 @@ const SKILL_ZONES = [
 const QUESTIONS = questionBank as ToeicQuestion[][];
 
 type GearLoadout = { helmet: boolean; sword: boolean; shield: boolean };
-type GameSave = { xp: number; gems: number; wins: number; correct: number; skillProgress: number[]; gear: GearLoadout };
+type CharacterVariant = 'male' | 'female';
+type GameSave = { xp: number; gems: number; wins: number; correct: number; skillProgress: number[]; gear: GearLoadout; character: CharacterVariant };
 type Battle = { zone: number; step: number; hp: number; selected: number | null; finished: boolean };
 
 const DEFAULT_SAVE: GameSave = {
@@ -54,6 +55,7 @@ const DEFAULT_SAVE: GameSave = {
   correct: 0,
   skillProgress: [0, 0, 0, 0],
   gear: { helmet: true, sword: true, shield: true },
+  character: 'male',
 };
 const RANKS = [
   { name: 'TÂN BINH', minXp: 0, color: '#8fa4aa' },
@@ -172,6 +174,10 @@ export default function ArenaPage() {
     }));
   }
 
+  function chooseCharacter(character: CharacterVariant) {
+    setSave((current) => ({ ...current, character }));
+  }
+
   return (
     <main className={styles.arena}>
       <div className={styles.ambientGlow} />
@@ -237,7 +243,7 @@ export default function ArenaPage() {
               </div>
               <div className={styles.heroArt} aria-hidden="true">
                 <div className={styles.heroAura} />
-                <KnightLoadout gear={save.gear} />
+                <KnightLoadout gear={save.gear} character={save.character} />
                 <span className={styles.damageOne}>+XP</span>
                 <span className={styles.damageTwo}>990</span>
               </div>
@@ -300,6 +306,10 @@ export default function ArenaPage() {
               </div>
               <div className={styles.gearPanel}>
                 <div><span>TRANG BỊ</span><small>CHẠM ĐỂ THÁO / GẮN</small></div>
+                <div className={styles.characterPicker} role="group" aria-label="Chọn nhân vật">
+                  <button type="button" className={save.character === 'male' ? styles.characterActive : ''} onClick={() => chooseCharacter('male')} aria-pressed={save.character === 'male'}>NAM</button>
+                  <button type="button" className={save.character === 'female' ? styles.characterActive : ''} onClick={() => chooseCharacter('female')} aria-pressed={save.character === 'female'}>NỮ</button>
+                </div>
                 <div className={styles.gearGrid}>
                   <GearButton label="MŨ ARC" src="/characters/knight/helmet-arc.png" equipped={save.gear.helmet} onClick={() => toggleGear('helmet')} />
                   <GearButton label="KIẾM" src="/characters/knight/sword-cyan.png" equipped={save.gear.sword} onClick={() => toggleGear('sword')} />
@@ -453,11 +463,11 @@ function BrandMark() {
   );
 }
 
-function KnightLoadout({ gear }: { gear: GearLoadout }) {
+function KnightLoadout({ gear, character }: { gear: GearLoadout; character: CharacterVariant }) {
   return (
     <div className={styles.characterStage}>
       {gear.sword && <Image className={styles.characterSword} src="/characters/knight/sword-cyan.png" alt="" width={233} height={1183} priority />}
-      <Image className={styles.characterBase} src="/characters/knight/base.png" alt="" width={1254} height={1254} priority />
+      <Image className={styles.characterBase} src={character === 'female' ? '/characters/knight/base-female.png' : '/characters/knight/base.png'} alt="" width={1254} height={1254} priority />
       {gear.helmet && <Image className={styles.characterHelmet} src="/characters/knight/helmet-arc.png" alt="" width={407} height={611} priority />}
       {gear.shield && <Image className={styles.characterShield} src="/characters/knight/shield-cyan.png" alt="" width={571} height={1161} priority />}
     </div>
