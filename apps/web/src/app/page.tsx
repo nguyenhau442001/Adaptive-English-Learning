@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import questionBank, { type ToeicQuestion } from '@/lib/question-bank';
@@ -42,10 +43,18 @@ const SKILL_ZONES = [
 
 const QUESTIONS = questionBank as ToeicQuestion[][];
 
-type GameSave = { xp: number; gems: number; wins: number; correct: number; skillProgress: number[] };
+type GearLoadout = { helmet: boolean; sword: boolean; shield: boolean };
+type GameSave = { xp: number; gems: number; wins: number; correct: number; skillProgress: number[]; gear: GearLoadout };
 type Battle = { zone: number; step: number; hp: number; selected: number | null; finished: boolean };
 
-const DEFAULT_SAVE: GameSave = { xp: 0, gems: 50, wins: 0, correct: 0, skillProgress: [0, 0, 0, 0] };
+const DEFAULT_SAVE: GameSave = {
+  xp: 0,
+  gems: 50,
+  wins: 0,
+  correct: 0,
+  skillProgress: [0, 0, 0, 0],
+  gear: { helmet: true, sword: true, shield: true },
+};
 const RANKS = [
   { name: 'TÂN BINH', minXp: 0, color: '#8fa4aa' },
   { name: 'ĐỒNG', minXp: 1000, color: '#c87a4a' },
@@ -82,7 +91,15 @@ export default function ArenaPage() {
     const raw = window.localStorage.getItem('vu-dai-toeic-save');
     queueMicrotask(() => {
       if (raw) {
-        try { setSave(JSON.parse(raw) as GameSave); } catch { /* dùng dữ liệu mặc định */ }
+        try {
+          const parsed = JSON.parse(raw) as Partial<GameSave>;
+          setSave({
+            ...DEFAULT_SAVE,
+            ...parsed,
+            skillProgress: parsed.skillProgress ?? DEFAULT_SAVE.skillProgress,
+            gear: { ...DEFAULT_SAVE.gear, ...parsed.gear },
+          });
+        } catch { /* dùng dữ liệu mặc định */ }
       }
       setLoaded(true);
     });
@@ -146,6 +163,13 @@ export default function ArenaPage() {
     utterance.lang = 'en-US';
     utterance.rate = .88;
     window.speechSynthesis.speak(utterance);
+  }
+
+  function toggleGear(slot: keyof GearLoadout) {
+    setSave((current) => ({
+      ...current,
+      gear: { ...current.gear, [slot]: !current.gear[slot] },
+    }));
   }
 
   return (
@@ -213,7 +237,7 @@ export default function ArenaPage() {
               </div>
               <div className={styles.heroArt} aria-hidden="true">
                 <div className={styles.heroAura} />
-                <WarriorArt />
+                <KnightLoadout gear={save.gear} />
                 <span className={styles.damageOne}>+XP</span>
                 <span className={styles.damageTwo}>990</span>
               </div>
@@ -273,6 +297,14 @@ export default function ArenaPage() {
                 <div><strong>{save.correct}</strong><span>ĐÒN CHÍ MẠNG</span></div>
                 <div><strong>{mastery}%</strong><span>THÔNG THẠO</span></div>
                 <div><strong>04</strong><span>KỸ NĂNG</span></div>
+              </div>
+              <div className={styles.gearPanel}>
+                <div><span>TRANG BỊ</span><small>CHẠM ĐỂ THÁO / GẮN</small></div>
+                <div className={styles.gearGrid}>
+                  <GearButton label="MŨ ARC" src="/characters/knight/helmet-arc.png" equipped={save.gear.helmet} onClick={() => toggleGear('helmet')} />
+                  <GearButton label="KIẾM" src="/characters/knight/sword-cyan.png" equipped={save.gear.sword} onClick={() => toggleGear('sword')} />
+                  <GearButton label="KHIÊN" src="/characters/knight/shield-cyan.png" equipped={save.gear.shield} onClick={() => toggleGear('shield')} />
+                </div>
               </div>
               <button type="button" onClick={() => startBattle(0)} className={styles.secondaryAction}>LUYỆN PHẢN XẠ NGHE <Icon name="arrow" /></button>
             </section>
@@ -421,29 +453,24 @@ function BrandMark() {
   );
 }
 
-function WarriorArt() {
+function KnightLoadout({ gear }: { gear: GearLoadout }) {
   return (
-    <svg className={styles.warrior} viewBox="0 0 430 410">
-      <defs>
-        <linearGradient id="armor" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#263c4d" /><stop offset="1" stopColor="#0c1823" /></linearGradient>
-        <linearGradient id="fire" x1="0" y1="1" x2="1" y2="0"><stop stopColor="#ff5b21" /><stop offset="1" stopColor="#ffd35a" /></linearGradient>
-        <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      </defs>
-      <path d="M345 32 219 230" stroke="url(#fire)" strokeWidth="13" strokeLinecap="round" filter="url(#glow)" />
-      <path d="m353 20 22 8-13 18-17-10 8-16Z" fill="#d9edf1" />
-      <path d="M209 198c48 7 82 45 96 101l-38 74H114l-28-59c18-66 56-108 123-116Z" fill="url(#armor)" stroke="#577080" strokeWidth="3" />
-      <path d="m147 213 58 80 58-81 15 15-33 146h-82l-34-143 18-17Z" fill="#101f2a" />
-      <path d="m174 294 31 29 31-29-14 79h-34l-14-79Z" fill="#e44d21" />
-      <path d="M135 217 98 232l-24 72 43 16 21-53 28-24-31-26Zm137 0 38 16 22 72-41 15-22-53-29-24 32-26Z" fill="url(#armor)" stroke="#577080" strokeWidth="3" />
-      <path d="M155 128c0-45 23-76 54-76s58 30 58 76v72c-19 20-36 30-57 30-22 0-39-10-55-30v-72Z" fill="#bd704b" />
-      <path d="M145 132c-4-69 23-105 65-105 39 0 70 32 65 102l-20-22-11 44h-76l-10-43-13 24Z" fill="url(#armor)" stroke="#688292" strokeWidth="3" />
-      <path d="m164 125 27-15h38l29 15-9 34h-76l-9-34Z" fill="#152530" stroke="#637e8d" strokeWidth="3" />
-      <path d="M177 138h21m22 0h21" stroke="#7cf4ff" strokeWidth="5" strokeLinecap="round" filter="url(#glow)" />
-      <path d="m210 49 13 64h-28l15-64Z" fill="#e55424" />
-      <path d="M145 170c-22 7-33 25-34 52l37-6 18-25-21-21Zm130 0c22 7 33 25 34 52l-37-6-18-25 21-21Z" fill="#263c4d" stroke="#637e8d" strokeWidth="3" />
-      <path d="M102 300 40 367m269-70 67 66" stroke="#273d4c" strokeWidth="25" strokeLinecap="round" />
-      <path d="m28 377 31-34 19 20-35 30-15-16Zm317-17 20-20 34 38-17 15-37-33Z" fill="#e65325" />
-    </svg>
+    <div className={styles.characterStage}>
+      {gear.sword && <Image className={styles.characterSword} src="/characters/knight/sword-cyan.png" alt="" width={233} height={1183} priority />}
+      <Image className={styles.characterBase} src="/characters/knight/base.png" alt="" width={1254} height={1254} priority />
+      {gear.helmet && <Image className={styles.characterHelmet} src="/characters/knight/helmet-arc.png" alt="" width={407} height={611} priority />}
+      {gear.shield && <Image className={styles.characterShield} src="/characters/knight/shield-cyan.png" alt="" width={571} height={1161} priority />}
+    </div>
+  );
+}
+
+function GearButton({ label, src, equipped, onClick }: { label: string; src: string; equipped: boolean; onClick: () => void }) {
+  return (
+    <button type="button" className={equipped ? styles.gearEquipped : ''} onClick={onClick} aria-pressed={equipped}>
+      <span><Image src={src} alt="" width={44} height={44} /></span>
+      <small>{label}</small>
+      <b>{equipped ? 'ĐANG GẮN' : 'ĐÃ THÁO'}</b>
+    </button>
   );
 }
 

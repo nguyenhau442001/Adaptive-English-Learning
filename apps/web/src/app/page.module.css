@@ -83,7 +83,12 @@
 .primaryAction:hover { transform: translateY(-2px); filter: brightness(1.12); }
 .heroArt { position: relative; min-width: 0; overflow: hidden; }
 .heroAura { position: absolute; width: 310px; height: 310px; border-radius: 50%; top: 60px; right: 25px; background: radial-gradient(circle, rgba(255,108,43,.18), transparent 65%); border: 1px solid rgba(255,112,50,.08); }
-.warrior { position: absolute; width: 430px !important; height: 410px !important; right: -34px; bottom: -24px; filter: drop-shadow(0 22px 20px rgba(0,0,0,.45)); stroke-linejoin: round !important; }
+.characterStage { position: absolute; width: 430px; height: 410px; right: -34px; bottom: -24px; filter: drop-shadow(0 22px 20px rgba(0,0,0,.45)); }
+.characterStage img { position: absolute; object-fit: contain; pointer-events: none; user-select: none; }
+.characterBase { z-index: 2; inset: 0; width: 100%; height: 100%; }
+.characterHelmet { z-index: 4; top: 1%; left: 44%; width: 12%; height: auto; filter: drop-shadow(0 0 8px rgba(59,215,229,.28)); }
+.characterSword { z-index: 1; top: -8%; right: 22%; width: auto; height: 65%; transform: rotate(9deg); transform-origin: 50% 80%; filter: drop-shadow(0 0 8px rgba(64,217,231,.45)); }
+.characterShield { z-index: 5; top: 35%; left: 22%; width: auto; height: 48%; transform: rotate(-7deg); filter: drop-shadow(0 0 8px rgba(64,217,231,.25)); }
 .damageOne, .damageTwo { position: absolute; color: #62edfa; font-size: 10px; font-weight: 900; text-shadow: 0 0 12px #2fc9d7; }
 .damageOne { right: 18px; top: 105px; transform: rotate(10deg); }
 .damageTwo { left: 32px; top: 115px; font-size: 18px; color: #ff9b63; transform: rotate(-10deg); }
@@ -126,6 +131,19 @@
 .playerStats div { display: flex; flex-direction: column; align-items: center; padding: 13px 3px; border-right: 1px solid var(--line); }
 .playerStats div:last-child { border: 0; }
 .playerStats strong { font-size: 15px; }.playerStats span { color: #637c85; margin-top: 3px; font-size: 6px; font-weight: 800; letter-spacing: .08em; }
+.gearPanel { margin: 0 0 15px; padding-top: 14px; border-top: 1px solid var(--line); }
+.gearPanel > div:first-child { display: flex; justify-content: space-between; align-items: center; margin-bottom: 9px; }
+.gearPanel > div:first-child span { color: #91a7ad; font-size: 8px; font-weight: 850; letter-spacing: .13em; }
+.gearPanel > div:first-child small { color: #597079; font-size: 6px; font-weight: 800; letter-spacing: .08em; }
+.gearGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.gearGrid button { min-width: 0; cursor: pointer; padding: 7px 4px 6px; display: flex; flex-direction: column; align-items: center; gap: 3px; border: 1px solid #243e47; border-radius: 4px; color: #718890; background: rgba(6,19,25,.62); transition: transform .18s, border-color .18s, background .18s; }
+.gearGrid button:hover { transform: translateY(-2px); border-color: #47717b; }
+.gearGrid button > span { width: 42px; height: 42px; display: grid; place-items: center; overflow: hidden; }
+.gearGrid button img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 3px 5px rgba(0,0,0,.55)); }
+.gearGrid button small { overflow: hidden; max-width: 100%; color: #a6b8bc; font-size: 6px; font-weight: 850; letter-spacing: .07em; white-space: nowrap; text-overflow: ellipsis; }
+.gearGrid button b { color: #526971; font-size: 5px; letter-spacing: .06em; }
+.gearGrid .gearEquipped { border-color: rgba(57,213,229,.48); background: rgba(41,153,165,.1); box-shadow: inset 0 0 18px rgba(57,213,229,.04); }
+.gearGrid .gearEquipped b { color: #55d5df; }
 .secondaryAction { width: 100%; cursor: pointer; background: transparent; height: 35px; display: flex; justify-content: center; align-items: center; gap: 8px; border: 1px solid #30515c; color: #99b1b7 !important; font-size: 8px; font-weight: 850; letter-spacing: .11em; transition: border-color .2s, color .2s; }
 .secondaryAction:hover { color: #eaf8fa !important; border-color: #4d8995; }
 .questCard .sectionHeading { align-items: center; }
@@ -183,7 +201,7 @@
   .topbar { height: 64px; padding: 0 17px; }.brandMark { width: 31px !important; }.brand strong { font-size: 14px; }.resources > span { display: none; }
   .shell { width: calc(100% - 28px); padding: 24px 0 90px; }
   .welcomeRow { align-items: flex-start; }.welcomeRow h1 { font-size: 25px; }.seasonBadge { min-width: auto; padding: 9px; }.seasonBadge span, .seasonBadge svg { display: none; }.seasonBadge strong { font-size: 13px; }
-  .battleCard { min-height: 540px; grid-template-columns: 1fr; }.battleCopy { padding: 25px 22px; z-index: 3; }.battleCopy h2 { font-size: 29px; }.battleDescription { max-width: 85%; }.heroArt { position: absolute; right: 0; bottom: 0; width: 100%; height: 270px; opacity: .72; }.warrior { width: 330px !important; height: 315px !important; right: -35px; }.heroAura { right: -40px; top: 30px; }.battleActions { position: absolute; top: 447px; left: 22px; right: 22px; }.battleActions .primaryAction { flex: 1; justify-content: center; }.battleActions > span { display: none; }
+  .battleCard { min-height: 540px; grid-template-columns: 1fr; }.battleCopy { padding: 25px 22px; z-index: 3; }.battleCopy h2 { font-size: 29px; }.battleDescription { max-width: 85%; }.heroArt { position: absolute; right: 0; bottom: 0; width: 100%; height: 270px; opacity: .72; }.characterStage { width: 330px; height: 315px; right: -35px; }.heroAura { right: -40px; top: 30px; }.battleActions { position: absolute; top: 447px; left: 22px; right: 22px; }.battleActions .primaryAction { flex: 1; justify-content: center; }.battleActions > span { display: none; }
   .zoneGrid { grid-template-columns: 1fr; }.zoneCard { min-height: 92px; }.zoneInfo p { white-space: normal; }
   .sideColumn { display: flex; }.rankBanner { width: 100%; }
   .mobileNav { position: fixed; display: grid; grid-template-columns: repeat(4,1fr); left: 0; right: 0; bottom: 0; z-index: 20; height: 69px; padding-bottom: env(safe-area-inset-bottom); background: rgba(5,16,22,.96); backdrop-filter: blur(15px); border-top: 1px solid var(--line); }

@@ -6,6 +6,7 @@ on:
     paths:
       - vu-dai-toeic.html
       - apps/web/src/lib/question-bank.js
+      - apps/web/public/characters/**
       - .github/workflows/deploy-pages.yml
   workflow_dispatch:
 
@@ -33,6 +34,7 @@ jobs:
           mkdir -p _site/apps/web/src/lib
           cp vu-dai-toeic.html _site/index.html
           cp apps/web/src/lib/question-bank.js _site/apps/web/src/lib/question-bank.js
+          cp -R apps/web/public/characters _site/characters
           touch _site/.nojekyll
 
       - name: Configure Pages
