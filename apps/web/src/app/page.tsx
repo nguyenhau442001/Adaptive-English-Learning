@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import questionBank, { type ToeicQuestion } from '@/lib/question-bank';
 import styles from './page.module.css';
 
 const SKILL_ZONES = [
@@ -39,30 +40,7 @@ const SKILL_ZONES = [
   },
 ] as const;
 
-type Question = { prompt: string; options: string[]; answer: number; explanation: string };
-
-const QUESTIONS: Question[][] = [
-  [
-    { prompt: 'The shipment is expected to arrive ahead of schedule.', options: ['The delivery will be late.', 'The delivery may arrive early.', 'The order was canceled.', 'The schedule is unavailable.'], answer: 1, explanation: '“Ahead of schedule” nghĩa là sớm hơn dự kiến.' },
-    { prompt: 'Why was the conference room reservation changed?', options: ['At the front desk.', 'Because the larger room became available.', 'For about two hours.', 'Yes, I made a reservation.'], answer: 1, explanation: 'Câu hỏi “Why” cần một lý do; “Because...” là đáp án phù hợp.' },
-    { prompt: 'Would you mind sending me the revised sales figures?', options: ['Not at all. I’ll email them now.', 'The sales team is upstairs.', 'It was revised yesterday.', 'About thirty figures.'], answer: 0, explanation: '“Would you mind...” là lời nhờ; đáp án tự nhiên là đồng ý và hành động.' },
-  ],
-  [
-    { prompt: 'All employees are required to submit travel receipts _____ ten business days.', options: ['within', 'during', 'among', 'beside'], answer: 0, explanation: '“Within + khoảng thời gian” diễn tả hạn chót trước khi khoảng thời gian kết thúc.' },
-    { prompt: 'The board approved the proposal _____ several concerns about its cost.', options: ['although', 'despite', 'because', 'unless'], answer: 1, explanation: '“Despite” đi với cụm danh từ “several concerns”; “although” phải đi với một mệnh đề.' },
-    { prompt: 'Ms. Tran is responsible for ensuring that all reports are _____ prepared.', options: ['accuracy', 'accurate', 'accurately', 'accurateness'], answer: 2, explanation: 'Cần trạng từ “accurately” để bổ nghĩa cho động từ “prepared”.' },
-  ],
-  [
-    { prompt: 'A client says: “The replacement still hasn’t arrived.” What is the best response?', options: ['You should wait.', 'That is not my department.', 'I’m sorry about the delay. Let me check the shipment now.', 'Replacements are usually blue.'], answer: 2, explanation: 'Phản hồi điểm cao cần xin lỗi, xác nhận vấn đề và đưa ra hành động cụ thể.' },
-    { prompt: 'Which opening sounds most professional in a presentation?', options: ['Hey guys, so...', 'Today, I’d like to outline three ways we can improve customer retention.', 'You know what I mean?', 'I have no idea where to start.'], answer: 1, explanation: 'Câu mở đầu nêu rõ mục tiêu và cấu trúc bài nói.' },
-    { prompt: 'Choose the strongest recommendation.', options: ['Maybe do something about costs.', 'Costs are bad.', 'I recommend renegotiating our supplier contracts to reduce costs by next quarter.', 'Suppliers exist.'], answer: 2, explanation: 'Một đề xuất mạnh phải cụ thể, có hành động và mốc thời gian.' },
-  ],
-  [
-    { prompt: 'Choose the clearest business sentence.', options: ['Due to the fact that demand increased, we hired.', 'Because demand increased, we hired two additional agents.', 'Demand increased and stuff happened.', 'Hiring, because of demand, maybe.'], answer: 1, explanation: 'Câu rõ, súc tích và cung cấp kết quả cụ thể.' },
-    { prompt: 'Which sentence uses the correct tone for a complaint email?', options: ['Your service is terrible!', 'Fix this now.', 'Could you please review the attached invoice and correct the duplicate charge?', 'Whatever, I paid twice.'], answer: 2, explanation: 'Giọng văn chuyên nghiệp lịch sự nhưng nêu yêu cầu cụ thể.' },
-    { prompt: 'Choose the best transition.', options: ['The campaign increased traffic. _____, conversion rates remained unchanged.', 'However', 'For example', 'Therefore', 'Similarly'], answer: 0, explanation: '“However” thể hiện sự tương phản giữa lượng truy cập tăng và tỷ lệ chuyển đổi không đổi.' },
-  ],
-];
+const QUESTIONS = questionBank as ToeicQuestion[][];
 
 type GameSave = { xp: number; gems: number; wins: number; correct: number; skillProgress: number[] };
 type Battle = { zone: number; step: number; hp: number; selected: number | null; finished: boolean };
@@ -121,9 +99,10 @@ export default function ArenaPage() {
   const rank = getRank(save.xp);
 
   function startBattle(zone = 1) {
-    setBattle({ zone, step: 0, hp: 100, selected: null, finished: false });
+    const firstQuestion = Math.floor(Math.random() * QUESTIONS[zone].length);
+    setBattle({ zone, step: firstQuestion, hp: 100, selected: null, finished: false });
     if (zone === 0 && 'speechSynthesis' in window) {
-      window.setTimeout(() => speak(QUESTIONS[0][0].prompt), 250);
+      window.setTimeout(() => speak(QUESTIONS[0][firstQuestion].prompt), 250);
     }
   }
 
@@ -348,6 +327,10 @@ export default function ArenaPage() {
                     <Icon name="headphones" /> PHÁT TÍN HIỆU
                   </button>
                 )}
+                <div className={styles.questionMeta}>
+                  <span>{QUESTIONS[battle.zone][battle.step].focus}</span>
+                  <span>{QUESTIONS[battle.zone][battle.step].difficulty}</span>
+                </div>
                 <p className={`${styles.questionPrompt} ${battle.zone === 0 ? styles.listeningPrompt : ''}`}>
                   {battle.zone === 0 ? 'Chọn ý nghĩa chính xác nhất của câu bạn vừa nghe.' : QUESTIONS[battle.zone][battle.step].prompt}
                 </p>
@@ -365,8 +348,32 @@ export default function ArenaPage() {
                 {battle.selected !== null && (
                   <div className={battle.selected === QUESTIONS[battle.zone][battle.step].answer ? styles.correctFeedback : styles.wrongFeedback}>
                     <strong>{battle.selected === QUESTIONS[battle.zone][battle.step].answer ? 'CHÍ MẠNG! +120 XP' : 'BOSS ĐÃ CHẶN ĐÒN'}</strong>
-                    <p>{QUESTIONS[battle.zone][battle.step].explanation}</p>
-                    <button type="button" onClick={nextStrike}>{battle.selected === QUESTIONS[battle.zone][battle.step].answer ? 'TUNG ĐÒN TIẾP' : 'THỬ CÂU KHÁC'} <Icon name="arrow" /></button>
+                    <p className={styles.mainExplanation}>{QUESTIONS[battle.zone][battle.step].explanation}</p>
+                    <div className={styles.explanationGrid}>
+                      <section>
+                        <small>BẢN DỊCH</small>
+                        <p>{QUESTIONS[battle.zone][battle.step].translation}</p>
+                      </section>
+                      <section>
+                        <small>CHÌA KHÓA GIẢI NHANH</small>
+                        <p>{QUESTIONS[battle.zone][battle.step].rule}</p>
+                      </section>
+                      <section className={styles.trapNote}>
+                        <small>BẪY TOEIC</small>
+                        <p>{QUESTIONS[battle.zone][battle.step].trap}</p>
+                      </section>
+                    </div>
+                    <details className={styles.choiceAnalysis}>
+                      <summary>Phân tích từng phương án</summary>
+                      <ol>
+                        {QUESTIONS[battle.zone][battle.step].choiceNotes.map((note, index) => (
+                          <li key={note} className={index === QUESTIONS[battle.zone][battle.step].answer ? styles.correctChoiceNote : ''}>
+                            <b>{String.fromCharCode(65 + index)}</b><span>{note}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    </details>
+                    <button className={styles.nextStrike} type="button" onClick={nextStrike}>{battle.selected === QUESTIONS[battle.zone][battle.step].answer ? 'TUNG ĐÒN TIẾP' : 'THỬ CÂU KHÁC'} <Icon name="arrow" /></button>
                   </div>
                 )}
               </>
