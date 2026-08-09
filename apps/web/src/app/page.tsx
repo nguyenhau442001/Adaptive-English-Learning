@@ -67,11 +67,37 @@ const QUESTIONS: Question[][] = [
 type GameSave = { xp: number; gems: number; wins: number; correct: number; skillProgress: number[] };
 type Battle = { zone: number; step: number; hp: number; selected: number | null; finished: boolean };
 
-const DEFAULT_SAVE: GameSave = { xp: 640, gems: 120, wins: 0, correct: 8, skillProgress: [18, 24, 12, 10] };
+const DEFAULT_SAVE: GameSave = { xp: 0, gems: 50, wins: 0, correct: 0, skillProgress: [0, 0, 0, 0] };
+const RANKS = [
+  { name: 'TÂN BINH', minXp: 0, color: '#8fa4aa' },
+  { name: 'ĐỒNG', minXp: 1000, color: '#c87a4a' },
+  { name: 'BẠC', minXp: 2500, color: '#b8ced4' },
+  { name: 'VÀNG', minXp: 4500, color: '#f2c14e' },
+  { name: 'BẠCH KIM', minXp: 7000, color: '#54d5ca' },
+  { name: 'KIM CƯƠNG', minXp: 10000, color: '#63b8ff' },
+  { name: 'CAO THỦ', minXp: 14000, color: '#d58cff' },
+] as const;
+
+function getRank(totalXp: number) {
+  let index = 0;
+  for (let rankIndex = RANKS.length - 1; rankIndex >= 0; rankIndex -= 1) {
+    if (totalXp >= RANKS[rankIndex].minXp) {
+      index = rankIndex;
+      break;
+    }
+  }
+  const current = RANKS[index];
+  const next = RANKS[index + 1];
+  const progress = next
+    ? Math.round(((totalXp - current.minXp) / (next.minXp - current.minXp)) * 100)
+    : 100;
+  return { current, next, progress, remaining: next ? next.minXp - totalXp : 0 };
+}
 
 export default function ArenaPage() {
   const [save, setSave] = useState<GameSave>(DEFAULT_SAVE);
   const [battle, setBattle] = useState<Battle | null>(null);
+  const [rankUp, setRankUp] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -92,6 +118,7 @@ export default function ArenaPage() {
   const xp = save.xp % 1000;
   const xpPercent = xp / 10;
   const mastery = Math.min(100, Math.round(save.skillProgress.reduce((sum, value) => sum + value, 0) / 4));
+  const rank = getRank(save.xp);
 
   function startBattle(zone = 1) {
     setBattle({ zone, step: 0, hp: 100, selected: null, finished: false });
@@ -108,12 +135,20 @@ export default function ArenaPage() {
     setBattle({ ...battle, selected: index, hp: nextHp, finished: correct && nextHp === 0 });
     if (correct) {
       setSave((current) => ({
-        ...current,
-        xp: current.xp + 120,
-        gems: current.gems + 5,
-        correct: current.correct + 1,
-        wins: nextHp === 0 ? current.wins + 1 : current.wins,
-        skillProgress: current.skillProgress.map((value, zone) => zone === battle.zone ? Math.min(100, value + 4) : value),
+        ...(() => {
+          const nextXp = current.xp + 120;
+          const previousRank = getRank(current.xp).current.name;
+          const promotedRank = getRank(nextXp).current.name;
+          if (previousRank !== promotedRank) queueMicrotask(() => setRankUp(promotedRank));
+          return {
+            ...current,
+            xp: nextXp,
+            gems: current.gems + 5,
+            correct: current.correct + 1,
+            wins: nextHp === 0 ? current.wins + 1 : current.wins,
+            skillProgress: current.skillProgress.map((value, zone) => zone === battle.zone ? Math.min(100, value + 4) : value),
+          };
+        })(),
       }));
     }
   }
@@ -243,8 +278,13 @@ export default function ArenaPage() {
                 <div className={styles.avatarFrame}><span>K</span><b>{level}</b></div>
                 <div>
                   <h2>Knight Learner</h2>
-                  <p><Icon name="shield" /> HẠNG BẠCH KIM</p>
+                  <p style={{ color: rank.current.color }}><Icon name="shield" /> {rank.current.name}</p>
                 </div>
+              </div>
+              <div className={styles.rankJourney}>
+                <span>{rank.next ? `${rank.remaining} XP ĐẾN HẠNG ${rank.next.name}` : 'ĐÃ ĐẠT HẠNG CAO NHẤT'}</span>
+                <strong>{rank.progress}%</strong>
+                <div><i style={{ width: `${rank.progress}%`, background: rank.current.color }} /></div>
               </div>
               <div className={styles.xpRow}>
                 <span>LEVEL {level}</span><span>{xp} / 1000 XP</span>
@@ -332,6 +372,14 @@ export default function ArenaPage() {
               </>
             )}
           </div>
+        </div>
+      )}
+
+      {rankUp && (
+        <div className={styles.rankUp} role="status">
+          <div><Icon name="shield" /></div>
+          <span><small>THĂNG HẠNG!</small><strong>{rankUp}</strong></span>
+          <button type="button" onClick={() => setRankUp(null)} aria-label="Đóng thông báo">×</button>
         </div>
       )}
 
