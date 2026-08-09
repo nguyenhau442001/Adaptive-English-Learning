@@ -14,6 +14,12 @@ import { NextResponse, type NextRequest } from 'next/server';
 // supported here, only nodejs, which is fine since we don't need edge for
 // this app).
 export async function proxy(request: NextRequest) {
+  // Vũ Đài chính là một game browser-only: không cần auth, cookie hay database.
+  // Các route luyện tập cũ vẫn dùng Supabase trong giai đoạn chuyển đổi.
+  if (request.nextUrl.pathname === '/') {
+    return NextResponse.next();
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(

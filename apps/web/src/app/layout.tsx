@@ -1,20 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "Adaptive English Learning",
-  description: "Adaptive TOEIC prep for band 990 — SRS vocab, real ETS-style practice, AI-graded Speaking/Writing.",
+  title: "Vũ Đài TOEIC — Học như một đấu sĩ",
+  description: "Chinh phục TOEIC 4 kỹ năng qua những trận đấu, nâng cấp nhân vật và hành trình tiến tới 990 điểm.",
 };
 
 export default function RootLayout({
@@ -24,8 +13,8 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      lang="vi"
+      className="h-full antialiased"
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
