@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" role="img" aria-labelledby="title desc">
+  <title id="title">A busy modern office</title>
+  <desc id="desc">Three coworkers are working around a table. One is standing and handing a document to a seated colleague while another uses a laptop.</desc>
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#eef6f7"/><stop offset="1" stop-color="#d8e7e9"/></linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#9ed9e4"/><stop offset="1" stop-color="#477c91"/></linearGradient>
+  </defs>
+  <rect width="960" height="560" fill="url(#wall)"/>
+  <rect x="38" y="44" width="300" height="242" rx="8" fill="url(#glass)" stroke="#fff" stroke-width="10"/>
+  <path d="M138 49v232M238 49v232M43 165h290" stroke="#d8f3f5" stroke-width="7" opacity=".8"/>
+  <path d="M46 224 118 139l64 58 58-81 91 108" fill="none" stroke="#d9f0da" stroke-width="25" opacity=".45"/>
+  <rect x="612" y="54" width="282" height="180" rx="8" fill="#fff" stroke="#bfd3d5" stroke-width="5"/>
+  <path d="m648 179 49-45 48 21 56-62 53 31" fill="none" stroke="#31aab8" stroke-width="8"/>
+  <circle cx="697" cy="134" r="8" fill="#ff9c57"/><circle cx="745" cy="155" r="8" fill="#ff9c57"/><circle cx="801" cy="93" r="8" fill="#ff9c57"/>
+  <path d="M110 449h744l49 111H61z" fill="#8b5d3d"/><path d="M140 449h680l26 61H114z" fill="#bc8254"/>
+  <g transform="translate(176 169)">
+    <circle cx="86" cy="55" r="39" fill="#8c5a3c"/><path d="M45 55q8-58 45-49 38 8 33 56-24-18-45-22-13 17-33 15" fill="#202a35"/>
+    <path d="M40 109q46-29 92 0l20 178H22z" fill="#277c89"/><path d="m126 134 96 29-7 24-104-13" fill="#8c5a3c"/>
+    <rect x="196" y="145" width="95" height="63" rx="4" fill="#fff" transform="rotate(9 196 145)"/><path d="m213 163 55 9m-58 10 45 7" stroke="#6f8c93" stroke-width="4"/>
+  </g>
+  <g transform="translate(485 246)">
+    <circle cx="75" cy="42" r="35" fill="#e0aa82"/><path d="M38 42q5-49 42-44 34 5 34 47-29-7-47-24-10 17-29 21" fill="#493425"/>
+    <path d="M27 88q48-26 94 2l23 119H9z" fill="#e36f47"/>
+    <path d="m31 111-77 44 12 23 83-34" fill="#e0aa82"/>
+  </g>
+  <g transform="translate(690 254)">
+    <circle cx="65" cy="39" r="34" fill="#bc7952"/><path d="M29 42q1-48 39-45 36 2 35 46-17-23-38-25-15 22-36 24" fill="#161f28"/>
+    <path d="M18 83q44-24 91 0l24 121H0z" fill="#4c619b"/>
+  </g>
+  <g transform="translate(620 411)"><path d="M0 0h133l25 82H23z" fill="#233543"/><path d="M12 9h112l15 54H29z" fill="#b9e3e8"/><path d="M20 88h150" stroke="#24343e" stroke-width="10"/></g>
+  <rect x="337" y="431" width="100" height="10" rx="5" fill="#edf2f2"/><rect x="350" y="415" width="72" height="10" rx="5" fill="#fff"/>
+</svg>

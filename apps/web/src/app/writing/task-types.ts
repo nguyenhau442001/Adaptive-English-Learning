@@ -1,25 +1,66 @@
-// 3 ETS TOEIC Writing task types per the product brief.
-export const WRITING_TASKS = [
+export type WritingTask = {
+  type: 'picture_description' | 'email_response' | 'opinion_essay';
+  questionRange: string;
+  label: string;
+  directions: string;
+  prompt: string;
+  officialTiming: string;
+  maxScore: 3 | 4 | 5;
+  recommendedWords?: number;
+  image?: string;
+  keywords?: readonly string[];
+  email?: { from: string; to: string; subject: string; body: string };
+  requirements?: readonly string[];
+};
+
+// Original practice material following the current ETS TOEIC Writing task
+// sequence. It is deliberately not copied from a released ETS test.
+export const WRITING_TASKS: readonly WritingTask[] = [
   {
     type: 'picture_description',
-    label: 'Picture description',
-    prompt:
-      'Imagine a photo showing a delivery worker handing a package to a customer at a front door, with a delivery van parked on the street. Write ONE sentence describing the picture, using the two given words: "package" and "deliver".',
-    minWords: 1,
+    questionRange: 'Questions 1–5',
+    label: 'Write a sentence based on a picture',
+    directions:
+      'Write ONE sentence about the picture. You must use both words below. You may change their forms and use them in any order.',
+    prompt: 'Describe the office scene in one complete sentence.',
+    officialTiming: '8 minutes for all 5 questions',
+    maxScore: 3,
+    image: '/toeic-office-scene.svg',
+    keywords: ['while', 'document'],
   },
   {
     type: 'email_response',
+    questionRange: 'Questions 6–7',
     label: 'Respond to a written request',
-    prompt:
-      'Read this email and write a response:\n\n"Hi, I noticed the invoice for order #7734 lists the wrong billing address. Could you correct this and resend the invoice by Friday? Also, could you confirm whether the shipment has left the warehouse yet? Thanks, Maria."\n\nWrite an email response of at least 3 sentences addressing both of Maria\'s requests.',
-    minWords: 30,
+    directions: 'Read the email, then write a professional response that completes every requirement.',
+    prompt: 'Respond as the training coordinator.',
+    officialTiming: '10 minutes for each email',
+    maxScore: 4,
+    recommendedWords: 80,
+    email: {
+      from: 'Nora Kim <n.kim@example.com>',
+      to: 'Training Coordinator',
+      subject: 'Customer service workshop',
+      body:
+        'I would like to attend next month’s customer service workshop, but I could not find the location or starting time on the registration page. I also have a food allergy. Could you send me the missing details and let me know whom I should contact about lunch?',
+    },
+    requirements: [
+      'Provide the workshop location and starting time.',
+      'Explain whom Nora should contact about her food allergy.',
+      'Ask ONE question to confirm her registration.',
+    ],
   },
   {
     type: 'opinion_essay',
-    label: 'Express an opinion',
+    questionRange: 'Question 8',
+    label: 'Write an opinion essay',
+    directions:
+      'State, explain, and support your opinion. Use reasons and specific examples, and organize the essay clearly.',
     prompt:
-      'Some companies require employees to work from the office at least three days a week, while others allow fully remote work. Which policy do you think is more effective for productivity, and why? Give reasons and examples to support your opinion. Write at least 300 words.',
-    minWords: 300,
+      'Do you agree or disagree with the following statement? Companies should allow employees to choose their own starting and finishing times. Give reasons or examples to support your opinion.',
+    officialTiming: '30 minutes to plan, write, and revise',
+    maxScore: 5,
+    recommendedWords: 300,
   },
 ] as const;
 

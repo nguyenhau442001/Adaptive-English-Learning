@@ -1,85 +1,37 @@
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/server';
 import { requireUser } from '@/lib/auth';
-import { getActiveExam } from '@/lib/data/exam';
+import { TOEIC_PRACTICE_SETS } from '@/lib/toeic-practice-data';
 import { PracticeSession } from './practice-session';
 
-export default async function PracticePage({
-  searchParams,
-}: {
-  searchParams: Promise<{ question_type?: string; part?: string }>;
-}) {
-  const { question_type, part } = await searchParams;
+export default async function PracticePage({ searchParams }: { searchParams: Promise<{ skill?: string; part?: string }> }) {
+  const params = await searchParams;
   await requireUser();
-  const supabase = await createClient();
-  const exam = await getActiveExam(supabase);
-
-  let query = supabase.from('questions').select('*').eq('exam_id', exam.id).limit(20);
-  if (question_type) query = query.eq('question_type', question_type);
-  if (part) query = query.eq('part', part);
-
-  const { data: questions } = await query;
-
-  const { data: allQuestions } = await supabase
-    .from('questions')
-    .select('question_type, part')
-    .eq('exam_id', exam.id);
-
-  const questionTypes = Array.from(new Set((allQuestions ?? []).map((q) => q.question_type)));
-  const parts = Array.from(new Set((allQuestions ?? []).map((q) => q.part)));
+  const skill = params.skill === 'reading' ? 'reading' : 'listening';
+  const allowedParts = skill === 'listening' ? [1, 2, 3, 4] : [5, 6, 7];
+  const requestedPart = Number(params.part);
+  const part = allowedParts.includes(requestedPart) ? requestedPart : allowedParts[0];
+  const sets = TOEIC_PRACTICE_SETS.filter((set) => set.skill === skill && set.part === part);
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-10">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Listening &amp; Reading Practice</h1>
-        <div className="flex gap-4 text-sm">
-          <Link href="/practice/mock" className="text-blue-600 underline">
-            Full mock test
-          </Link>
-          <Link href="/" className="text-blue-600 underline">
-            Dashboard
-          </Link>
+    <main className="min-h-screen bg-slate-50 px-4 py-10">
+      <div className="mx-auto max-w-5xl">
+        <div className="mb-7 flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className={`text-xs font-bold uppercase tracking-[.2em] ${skill === 'listening' ? 'text-cyan-700' : 'text-violet-700'}`}>TOEIC {skill}</p>
+            <h1 className="mt-1 text-3xl font-bold text-slate-950">Luyện {skill === 'listening' ? 'nghe' : 'đọc'} đúng cấu trúc đề</h1>
+            <p className="mt-2 text-sm text-slate-600">Câu hỏi theo format ETS · phản hồi sau từng câu · không giới hạn thời gian</p>
+          </div>
+          <Link href="/" className="text-sm font-semibold text-slate-600 underline">Về đấu trường</Link>
         </div>
+
+        <nav className="mb-6 flex flex-wrap gap-2" aria-label="Chọn Part TOEIC">
+          {allowedParts.map((item) => (
+            <Link key={item} href={`/practice?skill=${skill}&part=${item}`} className={`rounded-xl border px-5 py-2.5 text-sm font-bold ${item === part ? 'border-slate-950 bg-slate-950 text-white' : 'border-slate-300 bg-white text-slate-700'}`}>Part {item}</Link>
+          ))}
+        </nav>
+
+        <PracticeSession sets={sets} />
       </div>
-
-      <p className="mb-4 text-sm text-neutral-600">
-        Filter by question type — inference and paraphrase are prioritized since those are the
-        traps that actually cost points at high band, not simple detail lookup.
-      </p>
-
-      <form className="mb-6 flex gap-3 text-sm" method="get">
-        <select
-          name="question_type"
-          defaultValue={question_type ?? ''}
-          className="rounded border border-neutral-300 px-2 py-1"
-        >
-          <option value="">All question types</option>
-          {questionTypes.map((t) => (
-            <option key={t} value={t}>
-              {t}
-            </option>
-          ))}
-        </select>
-        <select name="part" defaultValue={part ?? ''} className="rounded border border-neutral-300 px-2 py-1">
-          <option value="">All parts</option>
-          {parts.map((p) => (
-            <option key={p} value={p}>
-              {p}
-            </option>
-          ))}
-        </select>
-        <button type="submit" className="rounded border border-neutral-300 px-3 py-1">
-          Filter
-        </button>
-      </form>
-
-      {!questions || questions.length === 0 ? (
-        <p className="text-neutral-600">
-          No questions match this filter. Run the seed script to load sample content.
-        </p>
-      ) : (
-        <PracticeSession questions={questions as never} />
-      )}
-    </div>
+    </main>
   );
 }

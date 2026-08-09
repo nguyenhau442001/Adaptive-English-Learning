@@ -10,7 +10,7 @@ const SKILL_ZONES = [
   {
     name: 'Thính Giác',
     english: 'LISTENING',
-    href: '/practice?part=1',
+    href: '/practice?skill=listening&part=1',
     icon: 'headphones',
     color: 'cyan',
     description: 'Bắt tín hiệu, phá bẫy âm thanh',
@@ -18,7 +18,7 @@ const SKILL_ZONES = [
   {
     name: 'Tốc Đọc',
     english: 'READING',
-    href: '/practice?part=5',
+    href: '/practice?skill=reading&part=5',
     icon: 'book',
     color: 'violet',
     description: 'Đọc nhanh, hạ gục từ khóa',
@@ -211,11 +211,11 @@ export default function ArenaPage() {
             <h1>Chào mừng trở lại, <span>Đấu sĩ!</span></h1>
             <p>Một trận đấu mới đang chờ. Sẵn sàng nâng hạng chứ?</p>
           </div>
-          <button type="button" onClick={() => startBattle(3)} className={styles.seasonBadge}>
+          <Link href="/writing" className={styles.seasonBadge}>
             <span>MỤC TIÊU MÙA</span>
             <strong>900+</strong>
             <Icon name="chevron" />
-          </button>
+          </Link>
         </section>
 
         <div className={styles.dashboardGrid}>
@@ -260,7 +260,7 @@ export default function ArenaPage() {
 
               <div className={styles.zoneGrid}>
                 {SKILL_ZONES.map((zone, index) => (
-                  <button type="button" key={zone.english} onClick={() => startBattle(index)} className={`${styles.zoneCard} ${styles[zone.color]}`}>
+                  <Link key={zone.english} href={zone.href} className={`${styles.zoneCard} ${styles[zone.color]}`}>
                     <div className={styles.zoneIcon}><Icon name={zone.icon} /></div>
                     <div className={styles.zoneInfo}>
                       <small>{zone.english}</small>
@@ -271,7 +271,7 @@ export default function ArenaPage() {
                       </div>
                     </div>
                     <div className={styles.zoneLevel}>LV.{Math.max(1, Math.ceil(save.skillProgress[index] / 10))}</div>
-                  </button>
+                  </Link>
                 ))}
               </div>
             </section>
@@ -316,7 +316,7 @@ export default function ArenaPage() {
                   <GearButton label="KHIÊN" src="/characters/knight/shield-cyan.png" equipped={save.gear.shield} onClick={() => toggleGear('shield')} />
                 </div>
               </div>
-              <button type="button" onClick={() => startBattle(0)} className={styles.secondaryAction}>LUYỆN PHẢN XẠ NGHE <Icon name="arrow" /></button>
+              <Link href="/practice?skill=listening&part=2" className={styles.secondaryAction}>LUYỆN PHẢN XẠ NGHE <Icon name="arrow" /></Link>
             </section>
 
             <section className={styles.questCard} id="quests">
@@ -324,16 +324,16 @@ export default function ArenaPage() {
                 <div><p className={styles.eyebrow}>NHIỆM VỤ HÔM NAY</p><h2>Nhận thưởng</h2></div>
                 <span className={styles.questCount}>{Math.min(3, save.wins)}/3</span>
               </div>
-              <Quest onClick={() => startBattle(0)} icon="flame" title="Phá ải Thính Giác" reward="+360 XP" done={save.skillProgress[0] >= 30} />
-              <Quest onClick={() => startBattle(1)} icon="target" title="Thắng 1 trận Tốc Đọc" reward="+360 XP" done={save.wins >= 1} />
-              <Quest onClick={() => startBattle(2)} icon="mic" title="Hạ boss Hùng Biện" reward="RƯƠNG BẠC" done={save.skillProgress[2] >= 30} />
+              <Quest href="/practice?skill=listening&part=1" icon="flame" title="Phá ải Thính Giác" reward="LUYỆN PART 1–4" done={save.skillProgress[0] >= 30} />
+              <Quest href="/practice?skill=reading&part=5" icon="target" title="Thắng 1 trận Tốc Đọc" reward="LUYỆN PART 5–7" done={save.wins >= 1} />
+              <Quest href="/speaking" icon="mic" title="Hạ boss Hùng Biện" reward="LUYỆN ĐỦ 5 TASK" done={save.skillProgress[2] >= 30} />
             </section>
 
-            <button type="button" onClick={() => startBattle(save.wins % 4)} className={styles.rankBanner}>
+            <a href="#zones" className={styles.rankBanner}>
               <div><Icon name="trophy" /></div>
-              <span><small>ĐẤU TRƯỜNG XẾP HẠNG</small><strong>Thi thử 4 kỹ năng</strong></span>
+              <span><small>LUYỆN TẬP KHÔNG GIỚI HẠN</small><strong>Chọn bài theo format TOEIC</strong></span>
               <Icon name="arrow" />
-            </button>
+            </a>
           </aside>
         </div>
       </div>
@@ -442,13 +442,13 @@ export default function ArenaPage() {
   );
 }
 
-function Quest({ onClick, icon, title, reward, done = false }: { onClick: () => void; icon: IconName; title: string; reward: string; done?: boolean }) {
+function Quest({ href, icon, title, reward, done = false }: { href: string; icon: IconName; title: string; reward: string; done?: boolean }) {
   return (
-    <button type="button" onClick={onClick} className={styles.questItem}>
+    <Link href={href} className={styles.questItem}>
       <div className={done ? styles.questDone : ''}><Icon name={done ? 'check' : icon} /></div>
       <span><strong>{title}</strong><small>{reward}</small></span>
       <Icon name="chevron" />
-    </button>
+    </Link>
   );
 }
 
