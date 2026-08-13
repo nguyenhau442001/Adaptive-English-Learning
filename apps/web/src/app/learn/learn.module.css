@@ -222,3 +222,65 @@
   .answers { grid-template-columns: 1fr; }.questionLabel { margin-top: 32px; }.feedback { align-items: stretch; flex-direction: column; }.feedback button { align-self: flex-end; }
   .resultSection { padding: 44px 19px; }.resultStats span { min-height: 17px; }.resultStats strong { font-size: 17px; }.resultActions { flex-direction: column; }.resultActions button { width: 100%; }
 }
+
+/* Accessible large-text defaults for long study sessions. */
+.brand small { font-size: 10px; }
+.topbar nav { font-size: 14px; }
+.backLink { font-size: 13px; }
+.eyebrow { font-size: 11px; }
+.heroCopy > p:not(.eyebrow) { font-size: 16px; }
+.heroStats span { font-size: 10px; }
+.progressOrb small { font-size: 10px; }
+.progressOrb p { font-size: 13px; }
+.catalogue { min-width: 0; }
+.catalogueHeading > span { font-size: 11px; }
+.filters button { padding: 9px 11px; font-size: 11px; }
+.lessonCard { min-height: 104px; }
+.lessonNumber { font-size: 13px; }
+.lessonCardCopy small { font-size: 9px; }
+.lessonCardCopy strong { font-size: 14px; }
+.lessonCardCopy em { font-size: 10px; }
+.lessonHeader > div > p:last-child { font-size: 15px; line-height: 1.65; }
+.levelBadge span { font-size: 8px; }
+.phaseTabs button { font-size: 11px; }
+.phaseTabs b { font-size: 10px; }
+.scenarioCard small, .recallPrompt small, .sectionLabel { font-size: 10px; }
+.scenarioCard p, .recallPrompt p { font-size: 14px; line-height: 1.7; }
+.objectives li { font-size: 13px; line-height: 1.6; }
+.principleHeading span { font-size: 9px; }
+.principleHeading h3 { font-size: 20px; }
+.principleCard > p { font-size: 14px; line-height: 1.75; }
+.beforeAfter small { font-size: 9px; }
+.beforeAfter p { font-size: 13px; line-height: 1.65; }
+.phraseCard { min-height: 140px; }
+.phraseCard > span { font-size: 11px; }
+.phraseCard h4 { font-size: 16px; }
+.phraseCard p { font-size: 13px; line-height: 1.55; }
+.phraseCard small { font-size: 12px; line-height: 1.6; }
+.nextButton { min-height: 48px; font-size: 12px; }
+.modelIntro button { font-size: 10px; }
+.dialogue > div > span { font-size: 12px; }
+.dialogue section > small { font-size: 10px; }
+.dialogue section > p { font-size: 15px; line-height: 1.65; }
+.dialogue aside { font-size: 11px; line-height: 1.55; }
+.practiceTopline { font-size: 10px; }
+.questionLabel { font-size: 10px; }
+.answers button { min-height: 82px; }
+.answers button > span { font-size: 11px; }
+.answers button p { font-size: 15px; line-height: 1.55; }
+.feedback strong { font-size: 13px; }
+.feedback p { font-size: 13px; line-height: 1.65; }
+.feedback button { font-size: 10px; }
+.resultSection > p:not(.eyebrow) { font-size: 14px; }
+.resultStats span { font-size: 9px; }
+.secondaryButton { min-height: 48px; font-size: 11px; }
+
+@media (min-width: 981px) {
+  .workspace { grid-template-columns: 380px minmax(0, 1fr); }
+}
+
+@media (max-width: 680px) {
+  .heroCopy > p:not(.eyebrow) { font-size: 15px; }
+  .phaseTabs button { font-size: 10px; }
+  .lessonCard { flex-basis: 92%; }
+}

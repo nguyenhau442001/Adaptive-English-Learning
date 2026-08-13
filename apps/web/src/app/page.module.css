@@ -231,3 +231,50 @@
   @keyframes pulse { 50% { transform: scale(1.08); opacity: .72; } }
   @keyframes float { 50% { transform: translateY(-8px) rotate(10deg); } }
 }
+
+/* Readability baseline: supporting text stays legible without browser zoom. */
+.eyebrow { font-size: 11px; }
+.seasonBadge span, .liveLabel, .battleStage, .enemyHealth, .battleActions,
+.sectionHeading > a, .localBadge, .advancedLabCard small, .cardTopline,
+.playerIdentity p, .gearPanel > div:first-child span, .modalBossRow,
+.questionMeta span, .explanationGrid small, .rankUp small { font-size: 10px; }
+.battleDescription { font-size: 14px; }
+.primaryAction { font-size: 13px; }
+.zoneInfo small { font-size: 10px; }
+.zoneInfo h3 { font-size: 17px; }
+.zoneInfo p { font-size: 11px; line-height: 1.45; }
+.zoneLevel { font-size: 10px; }
+.advancedLabCard p { font-size: 12px; line-height: 1.55; }
+.advancedLabCard span { font-size: 9px; }
+.advancedLabCard > strong { font-size: 10px; }
+.avatarFrame b { font-size: 10px; }
+.playerIdentity h2 { font-size: 17px; }
+.rankJourney, .xpRow { font-size: 10px; }
+.playerStats span { font-size: 8px; }
+.gearPanel > div:first-child small { font-size: 9px; }
+.characterPicker button { font-size: 9px; }
+.gearGrid button small { font-size: 9px; }
+.gearGrid button b { font-size: 8px; }
+.secondaryAction { min-height: 42px; height: auto; font-size: 10px; }
+.questCount { font-size: 11px; }
+.questItem strong { font-size: 12px; }
+.questItem small { font-size: 9px; }
+.rankBanner small { font-size: 9px; }
+.rankBanner strong { font-size: 13px; }
+.listenButton { font-size: 11px; }
+.answerGrid button { font-size: 14px; }
+.answerGrid button > span { font-size: 11px; }
+.correctFeedback > strong, .wrongFeedback > strong { font-size: 12px; }
+.mainExplanation { font-size: 14px; }
+.explanationGrid p { font-size: 13px; }
+.choiceAnalysis summary { font-size: 12px; }
+.choiceAnalysis li { font-size: 12px; }
+.choiceAnalysis li b { font-size: 10px; }
+.nextStrike { font-size: 11px; }
+.victoryPanel > p:not(.eyebrow) { font-size: 14px; }
+
+@media (max-width: 680px) {
+  .mobileNav a { font-size: 10px; }
+  .battleDescription { font-size: 13px; line-height: 1.55; }
+  .questionPrompt { font-size: 19px; }
+}
