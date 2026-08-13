@@ -6,6 +6,12 @@ mistakes get tagged by the specific trap that caused them (a Weakness Map, not a
 Speaking/Writing get rubric feedback. Architecture is exam-agnostic so IELTS can be added later as
 a data import, not a rewrite (see `docs/architecture.md`).
 
+Ngoài chế độ thi đấu TOEIC 4 kỹ năng, route `/learn` cung cấp **Executive English Lab**: ngân hàng
+bài học C1–C2 theo tình huống công sở quốc tế (họp và phản biện, email lãnh đạo, đàm phán phạm vi,
+thuyết trình dữ liệu, báo tin xấu, hợp tác đa văn hóa). Mỗi bài đi theo luồng học trọng tâm → quan
+sát hội thoại mẫu → làm bài tập có giải thích → luyện lại riêng câu sai. Tiến độ và điểm tốt nhất
+được lưu trong trình duyệt nên phần này hoạt động ngay cả khi chưa cấu hình Supabase.
+
 **Fully free to run, no account/login screen.** Supabase's free tier covers Postgres + Auth, and
 Vercel's free tier covers hosting. There's no sign-up form — opening the app transparently creates
 an anonymous Supabase session tied to your browser (see "How 'no login' works" below). Speaking/

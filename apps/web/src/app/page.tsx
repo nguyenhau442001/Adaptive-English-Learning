@@ -192,7 +192,7 @@ export default function ArenaPage() {
 
         <nav className={styles.desktopNav} aria-label="Điều hướng chính">
           <Link className={styles.activeNav} href="/">Đấu trường</Link>
-          <a href="#zones">Bản đồ</a>
+          <Link href="/learn">Học nâng cao</Link>
           <a href="#profile">Kho đồ</a>
           <a href="#quests">Xếp hạng</a>
         </nav>
@@ -274,6 +274,17 @@ export default function ArenaPage() {
                   </Link>
                 ))}
               </div>
+
+              <Link href="/learn" className={styles.advancedLabCard}>
+                <div className={styles.advancedLabIcon}><Icon name="briefcase" /></div>
+                <div>
+                  <small>NEW · EXECUTIVE ENGLISH C1–C2</small>
+                  <h3>Phòng luyện tiếng Anh tập đoàn</h3>
+                  <p>Học cách phản biện, viết email, đàm phán và thuyết trình — rồi làm bài tập để nhớ lâu.</p>
+                  <span>6 BÀI CHUYÊN SÂU · 24 BÀI TẬP</span>
+                </div>
+                <strong>VÀO HỌC <Icon name="arrow" /></strong>
+              </Link>
             </section>
           </div>
 
@@ -434,7 +445,7 @@ export default function ArenaPage() {
 
       <nav className={styles.mobileNav} aria-label="Điều hướng di động">
         <Link href="/"><Icon name="swords" /><span>Đấu trường</span></Link>
-        <a href="#zones"><Icon name="map" /><span>Bản đồ</span></a>
+        <Link href="/learn"><Icon name="book" /><span>Học nâng cao</span></Link>
         <a href="#profile"><Icon name="gem" /><span>Kho đồ</span></a>
         <a href="#quests"><Icon name="trophy" /><span>Xếp hạng</span></a>
       </nav>
@@ -484,7 +495,7 @@ function GearButton({ label, src, equipped, onClick }: { label: string; src: str
   );
 }
 
-type IconName = 'bolt' | 'gem' | 'chevron' | 'swords' | 'clock' | 'star' | 'arrow' | 'headphones' | 'book' | 'mic' | 'pen' | 'shield' | 'flame' | 'target' | 'trophy' | 'check' | 'map';
+type IconName = 'bolt' | 'gem' | 'chevron' | 'swords' | 'clock' | 'star' | 'arrow' | 'headphones' | 'book' | 'mic' | 'pen' | 'shield' | 'flame' | 'target' | 'trophy' | 'check' | 'map' | 'briefcase';
 
 function Icon({ name }: { name: IconName }) {
   const paths: Record<IconName, React.ReactNode> = {
@@ -505,6 +516,7 @@ function Icon({ name }: { name: IconName }) {
     trophy: <><path d="M8 4h8v5c0 4-2 6-4 6s-4-2-4-6V4Z"/><path d="M8 7H4v2c0 3 2 4 5 4m7-6h4v2c0 3-2 4-5 4M12 15v4m-4 2h8"/></>,
     check: <path d="m5 12 4 4L19 6" />,
     map: <><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Z"/><path d="M9 3v15m6-12v15"/></>,
+    briefcase: <><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3M3 12h18M10 12v2h4v-2"/></>,
   };
   return <svg viewBox="0 0 24 24" aria-hidden="true">{paths[name]}</svg>;
 }

@@ -113,6 +113,18 @@
 .zoneProgress i { display: block; height: 100%; background: currentColor; box-shadow: 0 0 8px currentColor; }
 .cyan { color: #3bd7e5 !important; }.violet { color: #a88aff !important; }.orange { color: #ff8148 !important; }.green { color: #52d493 !important; }
 
+.advancedLabCard { min-height: 120px; margin-top: 12px; padding: 18px; display: grid; grid-template-columns: 52px 1fr auto; gap: 16px; align-items: center; position: relative; overflow: hidden; border: 1px solid rgba(62, 211, 222, .26); border-radius: 5px; background: radial-gradient(circle at 92% 0, rgba(59, 213, 229, .12), transparent 210px), linear-gradient(125deg, rgba(21, 66, 73, .38), rgba(8, 24, 31, .97)); transition: transform .2s, border-color .2s; }
+.advancedLabCard:hover { transform: translateY(-2px); border-color: rgba(76, 225, 235, .5); }
+.advancedLabCard::after { content: 'C1'; position: absolute; right: 85px; top: -32px; color: transparent; -webkit-text-stroke: 1px rgba(70, 213, 224, .08); font-size: 112px; font-weight: 950; line-height: 1; }
+.advancedLabIcon { width: 50px; height: 58px; display: grid; place-items: center; color: #4bd8e3; clip-path: polygon(50% 0, 94% 23%, 86% 78%, 50% 100%, 14% 78%, 6% 23%); background: rgba(53, 188, 199, .11); border: 1px solid rgba(66, 214, 225, .48); }
+.advancedLabIcon svg { width: 23px; height: 23px; }
+.advancedLabCard > div:nth-child(2) { min-width: 0; position: relative; z-index: 1; }
+.advancedLabCard small { color: #55cbd4; font-size: 7px; font-weight: 900; letter-spacing: .14em; }
+.advancedLabCard h3 { margin: 4px 0; color: #e8f7f8; font-size: 16px; }
+.advancedLabCard p { margin: 0 0 8px; color: #758d95; font-size: 9px; line-height: 1.45; }
+.advancedLabCard span { color: #54757d; font-size: 6px; font-weight: 850; letter-spacing: .11em; }
+.advancedLabCard > strong { min-width: 90px; display: flex; align-items: center; justify-content: flex-end; gap: 7px; position: relative; z-index: 1; color: #77e2e9; font-size: 8px; letter-spacing: .09em; }
+
 .playerCard, .questCard { border: 1px solid var(--line); border-radius: 6px; background: linear-gradient(145deg, rgba(15,34,43,.93), rgba(8,22,29,.98)); padding: 18px; }
 .cardTopline { display: flex; justify-content: space-between; color: #6d858e; font-size: 8px; font-weight: 850; letter-spacing: .16em; }
 .cardTopline button { border: 0; background: none; color: #697f87; letter-spacing: 2px; cursor: pointer; }
@@ -206,6 +218,7 @@
   .welcomeRow { align-items: flex-start; }.welcomeRow h1 { font-size: 25px; }.seasonBadge { min-width: auto; padding: 9px; }.seasonBadge span, .seasonBadge svg { display: none; }.seasonBadge strong { font-size: 13px; }
   .battleCard { min-height: 540px; grid-template-columns: 1fr; }.battleCopy { padding: 25px 22px; z-index: 3; }.battleCopy h2 { font-size: 29px; }.battleDescription { max-width: 85%; }.heroArt { position: absolute; right: 0; bottom: 0; width: 100%; height: 270px; opacity: .72; }.characterStage { width: 330px; height: 315px; right: -35px; }.heroAura { right: -40px; top: 30px; }.battleActions { position: absolute; top: 447px; left: 22px; right: 22px; }.battleActions .primaryAction { flex: 1; justify-content: center; }.battleActions > span { display: none; }
   .zoneGrid { grid-template-columns: 1fr; }.zoneCard { min-height: 92px; }.zoneInfo p { white-space: normal; }
+  .advancedLabCard { grid-template-columns: 44px 1fr; padding: 15px; }.advancedLabIcon { width: 42px; height: 49px; }.advancedLabCard > strong { grid-column: 2; justify-content: flex-start; }.advancedLabCard::after { right: -10px; }
   .sideColumn { display: flex; }.rankBanner { width: 100%; }
   .mobileNav { position: fixed; display: grid; grid-template-columns: repeat(4,1fr); left: 0; right: 0; bottom: 0; z-index: 20; height: 69px; padding-bottom: env(safe-area-inset-bottom); background: rgba(5,16,22,.96); backdrop-filter: blur(15px); border-top: 1px solid var(--line); }
   .mobileNav a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; color: #687f87; font-size: 8px; font-weight: 750; }.mobileNav a:first-child { color: #ff7542; }.mobileNav svg { width: 20px; height: 20px; }
