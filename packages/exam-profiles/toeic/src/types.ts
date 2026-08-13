@@ -1,8 +1,5 @@
-// TOEIC-specific vocabularies. These constants live here, not in
-// packages/vocab-core, because word_tags.skill / .context and
-// weakness_logs.error_type are free text at the DB level on purpose —
-// each exam profile owns its own meaning for them (architecture principle 3:
-// adding IELTS must never require touching vocab-core).
+// TOEIC-specific vocabularies. They stay in the exam profile so the generic
+// local SRS engine never needs exam-specific knowledge.
 
 export const TOEIC_SKILLS = ['vocab', 'grammar', 'collocation'] as const;
 export type ToeicSkill = (typeof TOEIC_SKILLS)[number];

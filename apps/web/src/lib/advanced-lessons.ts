@@ -1,4 +1,4 @@
-export type LessonTrack = 'meetings' | 'writing' | 'negotiation' | 'presenting' | 'collaboration';
+export type LessonTrack = 'software' | 'meetings' | 'writing' | 'negotiation' | 'presenting' | 'collaboration';
 
 export interface AdvancedLesson {
   id: string;
@@ -36,6 +36,7 @@ export interface AdvancedLesson {
 }
 
 export const TRACK_LABELS: Record<LessonTrack, string> = {
+  software: 'Software & IT systems',
   meetings: 'Họp & phản biện',
   writing: 'Viết chuyên nghiệp',
   negotiation: 'Đàm phán',
@@ -44,6 +45,246 @@ export const TRACK_LABELS: Record<LessonTrack, string> = {
 };
 
 export const ADVANCED_LESSONS: AdvancedLesson[] = [
+  {
+    id: 'architecture-trade-offs',
+    track: 'software',
+    eyebrow: 'SOFTWARE SYSTEMS · 01',
+    title: 'Thảo luận trade-off kiến trúc hệ thống',
+    summary: 'Trình bày lựa chọn kiến trúc bằng availability, scalability, coupling và migration risk.',
+    level: 'C1+',
+    duration: 24,
+    skills: ['Speaking', 'Listening'],
+    scenario: 'Trong buổi architecture review của một hệ thống enterprise, bạn cần giải thích vì sao tách một service giúp scale độc lập nhưng làm tăng độ phức tạp vận hành.',
+    objectives: [
+      'Mô tả trade-off thay vì tuyên bố một kiến trúc “tốt nhất”.',
+      'Dùng đúng từ về dependency, coupling, failure và compatibility.',
+      'Đưa ra recommendation gắn với constraint thực tế của hệ thống.',
+    ],
+    principle: {
+      title: 'Quality attributes before technology choices',
+      body: 'Một cuộc trao đổi kiến trúc tốt bắt đầu từ thuộc tính hệ thống cần tối ưu—reliability, latency, scalability hay maintainability—rồi mới đánh giá công nghệ. Điều này giúp recommendation có căn cứ thay vì chạy theo xu hướng.',
+      before: 'Microservices are more modern, so we should split this module.',
+      after: 'Splitting the module would let us scale ingestion independently, but it introduces another network boundary and operational dependency. Given our current load, I recommend keeping it modular within the existing service.',
+    },
+    phrases: [
+      { phrase: 'a single point of failure', meaning: 'một điểm lỗi duy nhất có thể làm hỏng toàn hệ thống', usage: 'Dùng khi một component hoặc dependency không có redundancy.' },
+      { phrase: 'tightly / loosely coupled', meaning: 'liên kết chặt / liên kết lỏng giữa các component', usage: 'Mô tả mức một module phụ thuộc vào implementation hoặc lifecycle của module khác.' },
+      { phrase: 'scale horizontally', meaning: 'mở rộng bằng cách tăng số instance', usage: 'Phân biệt với vertical scaling—tăng tài nguyên cho một máy hoặc instance.' },
+      { phrase: 'backward-compatible change', meaning: 'thay đổi vẫn tương thích với client phiên bản cũ', usage: 'Dùng cho API, schema, event hoặc protocol được triển khai lệch phiên bản.' },
+    ],
+    dialogue: [
+      { speaker: 'Architect', text: 'Why not extract telemetry processing into a separate service now?' },
+      { speaker: 'You', text: 'It would let us scale horizontally and deploy that workload independently. The trade-off is an additional network boundary and another service to operate.', note: 'Nêu cả lợi ích và operational cost trong cùng câu trả lời.' },
+      { speaker: 'Architect', text: 'What would make the extraction worthwhile?' },
+      { speaker: 'You', text: 'If telemetry load begins constraining the core API, or if the teams need independent release cycles, the balance changes. Until then, a clear module boundary gives us lower coupling without the distributed-system overhead.', note: 'Đưa ra trigger cụ thể để xem lại quyết định.' },
+    ],
+    exercises: [
+      {
+        prompt: 'Cụm nào mô tả component mà khi hỏng có thể làm dừng toàn hệ thống?',
+        options: ['a source of truth', 'a single point of failure', 'a backward-compatible client', 'a horizontal instance'],
+        answer: 1,
+        explanation: '“Single point of failure” là component không có phương án dự phòng và có thể kéo toàn hệ thống xuống khi nó lỗi.',
+      },
+      {
+        prompt: 'Recommendation nào thể hiện tư duy trade-off tốt nhất?',
+        options: ['Microservices are always more scalable.', 'The monolith is old and should be replaced.', 'Extraction improves independent scaling but adds operational overhead; current load does not justify it yet.', 'Both options have advantages and disadvantages.'],
+        answer: 2,
+        explanation: 'Câu C nêu quality attribute, chi phí và constraint hiện tại, sau đó mới đi đến recommendation.',
+      },
+      {
+        prompt: '“Backward-compatible” nghĩa là gì trong API change?',
+        options: ['Client cũ vẫn tiếp tục hoạt động', 'Server tự động rollback', 'Database không cần backup', 'API chỉ chạy trên phiên bản mới'],
+        answer: 0,
+        explanation: 'Một thay đổi backward-compatible không phá vỡ consumer đang dùng contract hoặc phiên bản cũ.',
+      },
+      {
+        prompt: 'Câu nào dùng “coupling” tự nhiên nhất?',
+        options: ['The coupling server is offline.', 'This shared database creates tight coupling between the two services.', 'We need to coupling the modules.', 'The system has many couplings performance.'],
+        answer: 1,
+        explanation: '“Tight coupling between services/modules” là collocation chuẩn để nói hai thành phần phụ thuộc quá sâu vào nhau.',
+      },
+    ],
+  },
+  {
+    id: 'incident-communication',
+    track: 'software',
+    eyebrow: 'INCIDENT MANAGEMENT · 02',
+    title: 'Cập nhật production incident rõ và chính xác',
+    summary: 'Phân biệt symptom, impact, mitigation và root cause khi trao đổi trong sự cố.',
+    level: 'C1+',
+    duration: 22,
+    skills: ['Speaking', 'Writing'],
+    scenario: 'Sau một release, tỷ lệ request lỗi tăng ở một region. Bạn cần cập nhật incident channel khi root cause chưa được xác nhận.',
+    objectives: [
+      'Tách điều quan sát được khỏi giả thuyết kỹ thuật.',
+      'Mô tả blast radius và customer impact có định lượng.',
+      'Phân biệt mitigation tạm thời với remediation dài hạn.',
+    ],
+    principle: {
+      title: 'Observed fact ≠ working hypothesis',
+      body: 'Trong incident, ngôn ngữ quá chắc chắn có thể đẩy đội theo sai hướng. Hãy đánh dấu rõ observed, suspected và confirmed; đồng thời cập nhật biện pháp containment cùng thời điểm kiểm tra tiếp theo.',
+      before: 'The database change caused the outage. We are fixing it.',
+      after: 'We observed a 12% error rate after the deployment. A schema mismatch is the leading hypothesis, but it is not yet confirmed. We have rolled back and error rates are recovering.',
+    },
+    phrases: [
+      { phrase: 'the blast radius', meaning: 'phạm vi người dùng hoặc hệ thống bị ảnh hưởng', usage: 'Dùng để định lượng region, service, tenant hoặc workflow nào nằm trong phạm vi sự cố.' },
+      { phrase: 'a regression introduced by…', meaning: 'lỗi tái phát hoặc hành vi xấu xuất hiện do thay đổi…', usage: 'Dùng khi chức năng từng hoạt động nhưng bị hỏng sau code/config change.' },
+      { phrase: 'mitigation vs remediation', meaning: 'giảm tác động tạm thời và xử lý nguyên nhân lâu dài', usage: 'Rollback có thể là mitigation; sửa thiết kế và bổ sung test thường là remediation.' },
+      { phrase: 'reproduce the issue', meaning: 'tái hiện lỗi một cách có kiểm soát', usage: 'Bước quan trọng trước khi xác nhận root cause hoặc kiểm chứng fix.' },
+    ],
+    dialogue: [
+      { speaker: 'Incident lead', text: 'Do we know whether all customers are affected?' },
+      { speaker: 'You', text: 'The blast radius is currently limited to EU-West accounts using the bulk-import endpoint. Other regions and standard imports are healthy.', note: 'Giới hạn impact bằng region và workflow cụ thể.' },
+      { speaker: 'Incident lead', text: 'Is the new parser the root cause?' },
+      { speaker: 'You', text: 'It is our leading hypothesis because the errors began after deployment, but we have not reproduced the issue yet. Rollback is the immediate mitigation; we will confirm root cause separately.', note: 'Không biến correlation thành kết luận nguyên nhân.' },
+    ],
+    exercises: [
+      {
+        prompt: 'Câu nào cập nhật incident chính xác nhất khi root cause chưa chắc chắn?',
+        options: ['The parser definitely caused it.', 'We think something is wrong.', 'The parser is the leading hypothesis, but it has not yet been confirmed.', 'The root cause will be fixed soon.'],
+        answer: 2,
+        explanation: 'Câu C nêu giả thuyết rõ nhưng giữ đúng mức độ chắc chắn của bằng chứng hiện có.',
+      },
+      {
+        prompt: 'Rollback nhanh để giảm error rate được gọi là gì?',
+        options: ['remediation', 'mitigation', 'root cause', 'regression testing'],
+        answer: 1,
+        explanation: 'Rollback giảm tác động hiện tại nên là mitigation. Remediation xử lý nguyên nhân để lỗi không tái diễn.',
+      },
+      {
+        prompt: '“Blast radius” nên được mô tả bằng gì?',
+        options: ['Mức độ căng thẳng của đội', 'Số dòng code thay đổi', 'Users, regions và workflows bị ảnh hưởng', 'Thời gian họp incident'],
+        answer: 2,
+        explanation: 'Blast radius là phạm vi tác động, nên cần định lượng bằng đối tượng và chức năng thực sự bị ảnh hưởng.',
+      },
+      {
+        prompt: 'Câu nào mô tả regression đúng?',
+        options: ['The new release broke a workflow that previously passed.', 'The team created a new requirement.', 'The server needs more capacity next year.', 'The user requested a feature.'],
+        answer: 0,
+        explanation: 'Regression là chức năng đã từng hoạt động nhưng bị hỏng sau một thay đổi mới.',
+      },
+    ],
+  },
+  {
+    id: 'requirements-and-api-contracts',
+    track: 'software',
+    eyebrow: 'SYSTEM INTEGRATION · 03',
+    title: 'Làm rõ requirement và API contract',
+    summary: 'Hỏi đúng câu để phát hiện ambiguity, edge case và dependency trước khi implement.',
+    level: 'C1',
+    duration: 23,
+    skills: ['Speaking', 'Reading', 'Writing'],
+    scenario: 'Hai team ở các location khác nhau đang tích hợp qua REST API, nhưng ticket chỉ ghi “sync user status in real time” và chưa định nghĩa failure behaviour.',
+    objectives: [
+      'Tách functional requirement khỏi non-functional requirement.',
+      'Chuyển từ ngữ mơ hồ thành acceptance criteria kiểm thử được.',
+      'Làm rõ source of truth, ownership và contract khi tích hợp.',
+    ],
+    principle: {
+      title: 'Turn adjectives into measurable behaviour',
+      body: 'Các từ như fast, reliable, real time và user-friendly không đủ để implement hoặc test. Hãy hỏi chúng có nghĩa gì bằng latency, availability, data consistency và hành vi khi dependency thất bại.',
+      before: 'The status should update in real time and the API must be reliable.',
+      after: 'The status should be visible within five seconds for 99% of updates. If the consumer is unavailable, the producer retries three times and then places the event in a dead-letter queue.',
+    },
+    phrases: [
+      { phrase: 'acceptance criteria', meaning: 'tiêu chí nghiệm thu có thể kiểm chứng', usage: 'Mô tả điều phải đúng để story hoặc requirement được coi là hoàn tất.' },
+      { phrase: 'a non-functional requirement', meaning: 'yêu cầu về chất lượng hoặc ràng buộc hệ thống', usage: 'Ví dụ latency, availability, security, capacity và maintainability.' },
+      { phrase: 'the source of truth', meaning: 'nguồn dữ liệu có thẩm quyền cuối cùng', usage: 'Làm rõ hệ thống nào quyết định giá trị khi dữ liệu giữa các service khác nhau.' },
+      { phrase: 'an edge case', meaning: 'trường hợp biên hoặc hiếm nhưng hợp lệ', usage: 'Dùng cho input, state hoặc timing nằm ngoài happy path thông thường.' },
+    ],
+    dialogue: [
+      { speaker: 'Product owner', text: 'User status needs to be synchronized in real time.' },
+      { speaker: 'You', text: 'What does real time mean for this workflow—under one second, five seconds, or one minute?', note: 'Biến adjective mơ hồ thành ngưỡng đo được.' },
+      { speaker: 'Product owner', text: 'Five seconds is acceptable.' },
+      { speaker: 'You', text: 'Which system is the source of truth, and what should happen if the consumer is unavailable? I would like those behaviours in the acceptance criteria before we finalize the API contract.', note: 'Làm rõ ownership và failure path trước implementation.' },
+    ],
+    exercises: [
+      {
+        prompt: 'Ví dụ nào là non-functional requirement?',
+        options: ['The user can export a report.', 'The API responds within 300 ms at the 95th percentile.', 'The admin can delete an account.', 'The system sends a confirmation email.'],
+        answer: 1,
+        explanation: 'Latency target mô tả thuộc tính chất lượng của hệ thống; các câu còn lại mô tả chức năng.',
+      },
+      {
+        prompt: 'Câu hỏi nào làm rõ “real time” tốt nhất?',
+        options: ['Can you explain more?', 'Is real time important?', 'What is the maximum acceptable delay at the 99th percentile?', 'Should we use WebSockets?'],
+        answer: 2,
+        explanation: 'Câu C biến khái niệm mơ hồ thành một ngưỡng có thể đo và test trước khi chọn công nghệ.',
+      },
+      {
+        prompt: '“Source of truth” là hệ thống nào?',
+        options: ['Hệ thống có giao diện đẹp nhất', 'Hệ thống giữ giá trị có thẩm quyền cuối cùng', 'Hệ thống gọi API đầu tiên', 'Hệ thống có nhiều log nhất'],
+        answer: 1,
+        explanation: 'Source of truth là nơi dữ liệu được xem là chính xác và có quyền quyết định khi có xung đột.',
+      },
+      {
+        prompt: 'Acceptance criterion nào test được rõ nhất?',
+        options: ['The API should be fast.', 'The sync should usually work.', '99% of status updates are visible within five seconds.', 'Users should have a good experience.'],
+        answer: 2,
+        explanation: 'Câu C có metric, tỷ lệ và ngưỡng thời gian nên có thể kiểm chứng tự động.',
+      },
+    ],
+  },
+  {
+    id: 'code-review-and-release',
+    track: 'software',
+    eyebrow: 'ENGINEERING DELIVERY · 04',
+    title: 'Code review, technical debt và release',
+    summary: 'Trao đổi về chất lượng code và rủi ro release mà không biến review thành phê bình cá nhân.',
+    level: 'C1+',
+    duration: 21,
+    skills: ['Speaking', 'Writing'],
+    scenario: 'Một pull request đáp ứng happy path nhưng thiếu test cho retry và làm tăng coupling. Release window lại đang rất gần.',
+    objectives: [
+      'Viết review comment tập trung vào risk và maintainability.',
+      'Phân biệt refactor với functional change.',
+      'Thảo luận technical debt cùng kế hoạch trả nợ cụ thể.',
+    ],
+    principle: {
+      title: 'Review the change, not the author',
+      body: 'Một review có chất lượng mô tả hành vi, rủi ro và tiêu chí mong muốn. Khi phải chấp nhận giải pháp tạm thời, hãy ghi rõ debt, owner và thời điểm xử lý thay vì để “temporary” tồn tại vô hạn.',
+      before: 'You wrote this in a complicated way and forgot the tests.',
+      after: 'This implementation covers the happy path, but retry failure is currently untested and the direct database access increases coupling. Could we add the failure-path test before merge and track the repository abstraction separately?',
+    },
+    phrases: [
+      { phrase: 'technical debt', meaning: 'chi phí tương lai do chọn giải pháp nhanh hoặc chưa hoàn thiện', usage: 'Nên đi cùng impact, owner và repayment plan; không dùng như nhãn chung cho mọi code cũ.' },
+      { phrase: 'refactor without changing behaviour', meaning: 'cải tổ cấu trúc mà không đổi hành vi bên ngoài', usage: 'Phân biệt cải thiện maintainability với feature hoặc bug fix.' },
+      { phrase: 'behind a feature flag', meaning: 'được kiểm soát bằng cờ bật/tắt tính năng', usage: 'Giảm rủi ro rollout và cho phép tách deploy khỏi release.' },
+      { phrase: 'roll back the release', meaning: 'đưa hệ thống về phiên bản trước', usage: 'Dùng khi version mới gây regression và rollback path đã được chuẩn bị.' },
+    ],
+    dialogue: [
+      { speaker: 'Developer', text: 'The retry abstraction is not ideal, but we need to release on Friday.' },
+      { speaker: 'You', text: 'I am comfortable tracking the abstraction as technical debt, provided that the failure path is covered before merge.', note: 'Tách điều có thể hoãn khỏi risk cần xử lý trước release.' },
+      { speaker: 'Developer', text: 'Can we reduce rollout risk another way?' },
+      { speaker: 'You', text: 'Yes. We can deploy behind a feature flag, enable it for one tenant first, and keep the rollback path verified.', note: 'Dùng vocabulary của progressive delivery để đề xuất kiểm soát cụ thể.' },
+    ],
+    exercises: [
+      {
+        prompt: 'Review comment nào tập trung vào code thay vì người viết?',
+        options: ['You made this too complex.', 'You clearly forgot the edge cases.', 'This branch leaves retry failure untested; could we cover it before merge?', 'Your approach is wrong.'],
+        answer: 2,
+        explanation: 'Câu C chỉ ra hành vi thiếu, risk và action mong muốn mà không phán xét năng lực tác giả.',
+      },
+      {
+        prompt: 'Refactor khác functional change ở điểm nào?',
+        options: ['Refactor luôn thay API public', 'Refactor thay cấu trúc nhưng giữ hành vi quan sát được', 'Refactor không cần test', 'Refactor chỉ là đổi tên biến'],
+        answer: 1,
+        explanation: 'Mục tiêu của refactor là cải thiện thiết kế nội bộ trong khi giữ nguyên external behaviour.',
+      },
+      {
+        prompt: 'Triển khai “behind a feature flag” giúp điều gì?',
+        options: ['Xóa hoàn toàn nhu cầu test', 'Bật tính năng có kiểm soát và tách deploy khỏi release', 'Tăng test coverage tự động', 'Ngăn mọi production incident'],
+        answer: 1,
+        explanation: 'Feature flag cho phép code đã deploy nhưng chỉ được bật cho nhóm hoặc thời điểm được chọn; nó giảm chứ không loại bỏ risk.',
+      },
+      {
+        prompt: 'Technical debt được quản lý tốt cần đi kèm điều gì?',
+        options: ['Một comment TODO không deadline', 'Tên người đã tạo code', 'Impact, owner và kế hoạch xử lý', 'Cam kết sẽ rewrite toàn hệ thống'],
+        answer: 2,
+        explanation: 'Debt chỉ quản lý được khi tác động và trách nhiệm được ghi nhận cùng trigger hoặc thời điểm trả nợ.',
+      },
+    ],
+  },
   {
     id: 'disagree-with-tact',
     track: 'meetings',

@@ -1,6 +1,4 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { getActiveExam } from '@/lib/data/exam';
 import { computeTextMetrics, scoreFromThresholds } from '@/lib/text-metrics';
 import type { SpeakingTaskType } from '@/app/speaking/task-types';
 
@@ -74,10 +72,6 @@ function gradeSpeaking(
 }
 
 export async function POST(request: Request) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
   const body = (await request.json()) as {
     taskType: SpeakingTaskType;
     prompt: string;
@@ -87,26 +81,15 @@ export async function POST(request: Request) {
   };
   if (!body.transcript?.trim()) return NextResponse.json({ error: 'transcript is required' }, { status: 400 });
 
-  const exam = await getActiveExam(supabase);
   const grade = gradeSpeaking(body.taskType, body.prompt, body.transcript, body.confidence ?? null);
-  const { data: attempt, error } = await supabase
-    .from('speaking_attempts')
-    .insert({
-      user_id: user.id,
-      exam_id: exam.id,
+  return NextResponse.json({
+    attempt: {
+      id: crypto.randomUUID(),
       task_type: body.taskType,
-      audio_url: body.audioUrl ?? null,
       transcript: body.transcript,
       rubric_scores: grade.rubric_scores,
       ai_feedback: grade.feedback,
-    })
-    .select()
-    .single();
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({
-    attempt: {
-      ...attempt,
+      created_at: new Date().toISOString(),
       score: grade.score,
       max_score: grade.maxScore,
       criterion_scores: grade.criterionScores,

@@ -1,2 +1,3 @@
 export * from './types';
-export * from './seed-logic';
+export { toeicWordSeeds } from '../data/words.seed';
+export { toeicQuestionSeeds } from '../data/questions.seed';

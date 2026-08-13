@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import questionBank, { type ToeicQuestion } from '@/lib/question-bank';
+import { ADVANCED_LESSONS } from '@/lib/advanced-lessons';
 import styles from './page.module.css';
 
 const SKILL_ZONES = [
@@ -278,10 +279,10 @@ export default function ArenaPage() {
               <Link href="/learn" className={styles.advancedLabCard}>
                 <div className={styles.advancedLabIcon}><Icon name="briefcase" /></div>
                 <div>
-                  <small>NEW · EXECUTIVE ENGLISH C1–C2</small>
-                  <h3>Phòng luyện tiếng Anh tập đoàn</h3>
-                  <p>Học cách phản biện, viết email, đàm phán và thuyết trình — rồi làm bài tập để nhớ lâu.</p>
-                  <span>6 BÀI CHUYÊN SÂU · 24 BÀI TẬP</span>
+                  <small>NEW · SOFTWARE ENGLISH C1–C2</small>
+                  <h3>English cho Software &amp; IT Systems</h3>
+                  <p>Học cách trao đổi về architecture, API, incident và release — rồi làm bài tập để nhớ lâu.</p>
+                  <span>{ADVANCED_LESSONS.length} BÀI CHUYÊN SÂU · {ADVANCED_LESSONS.reduce((sum, lesson) => sum + lesson.exercises.length, 0)} BÀI TẬP</span>
                 </div>
                 <strong>VÀO HỌC <Icon name="arrow" /></strong>
               </Link>

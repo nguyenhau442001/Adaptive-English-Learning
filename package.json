@@ -11,8 +11,7 @@
   ],
   "scripts": {
     "dev": "npm run dev --workspace=web",
-    "build": "npm run build --workspace=web",
-    "seed:toeic": "npm run seed --workspace=@aelearning/exam-profile-toeic"
+    "build": "npm run build --workspace=web"
   },
   "devDependencies": {
     "@tailwindcss/oxide": "^4.3.3",

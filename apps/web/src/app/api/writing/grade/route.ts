@@ -1,6 +1,4 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { getActiveExam } from '@/lib/data/exam';
 import { computeTextMetrics, scoreFromThresholds, scoreSentenceLength } from '@/lib/text-metrics';
 import type { WritingTaskType } from '@/app/writing/task-types';
 
@@ -95,10 +93,6 @@ function gradeWriting(
 }
 
 export async function POST(request: Request) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
   const body = (await request.json()) as {
     taskType: WritingTaskType;
     prompt: string;
@@ -108,21 +102,17 @@ export async function POST(request: Request) {
   };
   if (!body.submittedText?.trim()) return NextResponse.json({ error: 'submittedText is required' }, { status: 400 });
 
-  const exam = await getActiveExam(supabase);
   const grade = gradeWriting(body.taskType, body.prompt, body.submittedText, body.keywords, body.requirements);
-  const { data: attempt, error } = await supabase
-    .from('writing_attempts')
-    .insert({
-      user_id: user.id,
-      exam_id: exam.id,
+  return NextResponse.json({
+    attempt: {
+      id: crypto.randomUUID(),
       task_type: body.taskType,
       submitted_text: body.submittedText,
       rubric_scores: grade.rubric_scores,
       ai_feedback: grade.feedback,
-    })
-    .select()
-    .single();
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ attempt: { ...attempt, score: grade.score, max_score: grade.maxScore } });
+      created_at: new Date().toISOString(),
+      score: grade.score,
+      max_score: grade.maxScore,
+    },
+  });
 }

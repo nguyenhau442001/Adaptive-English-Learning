@@ -1,6 +1,5 @@
-// Mirrors packages/vocab-core/migrations/0001_init_vocab_core.sql and
-// 0002_practice_and_weakness.sql. Kept exam-agnostic on purpose: nothing in
-// this file may reference a specific exam (no 'toeic'/'ielts' literals).
+// Local-first, exam-agnostic vocabulary types. Nothing in this file may
+// reference a specific exam (no 'toeic'/'ielts' literals).
 
 export interface Meaning {
   pos: string; // part of speech, e.g. 'v.', 'n.', 'adj.'

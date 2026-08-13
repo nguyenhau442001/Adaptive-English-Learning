@@ -3,6 +3,8 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import type { ToeicPracticeSet } from '@/lib/toeic-practice-data';
+import { addWeaknessLog } from '@/lib/local-learning-store';
+import { classifyError } from '@/lib/weakness-classifier';
 
 export function PracticeSession({ sets }: { sets: ToeicPracticeSet[] }) {
   const [setIndex, setSetIndex] = useState(0);
@@ -30,6 +32,23 @@ export function PracticeSession({ sets }: { sets: ToeicPracticeSet[] }) {
     if (selected !== null) return;
     setSelected(index);
     setScore((current) => ({ correct: current.correct + (index === question.answer ? 1 : 0), total: current.total + 1 }));
+    if (index !== question.answer) {
+      const questionType = set.part === 5 ? 'grammar_trap' : set.part === 6 ? 'paraphrase' : set.part === 7 ? 'detail' : 'main_idea';
+      const diagnosis = classifyError({
+        questionType,
+        questionText: question.question,
+        passage: set.passages?.map((item) => item.text).join('\n') ?? set.audioScript,
+        choices: question.choices,
+        correctAnswer: question.choices[question.answer],
+        userAnswer: question.choices[index],
+        explanation: question.explanation,
+      });
+      addWeaknessLog({
+        skill: set.skill,
+        errorType: diagnosis.errorType,
+        note: diagnosis.note,
+      });
+    }
   }
 
   function nextQuestion() {

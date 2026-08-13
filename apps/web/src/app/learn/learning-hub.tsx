@@ -169,9 +169,9 @@ export function LearningHub() {
 
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
-          <p className={styles.eyebrow}>EXECUTIVE ENGLISH · C1–C2</p>
+          <p className={styles.eyebrow}>SOFTWARE ENGLISH · C1–C2</p>
           <h1>Học để dùng được.<br /><span>Luyện để nhớ lâu.</span></h1>
-          <p>Tiếng Anh công sở cấp cao cho môi trường tập đoàn châu Âu — tập trung vào sắc thái, quyết định và tình huống thật thay vì mẹo làm bài thi.</p>
+          <p>Tiếng Anh chuyên nghiệp cho công việc software engineering tại Bosch — tập trung vào IT systems, architecture, incident, integration và cách trao đổi kỹ thuật trong đội ngũ quốc tế.</p>
           <div className={styles.heroStats}>
             <div><strong>{ADVANCED_LESSONS.length}</strong><span>BÀI CHUYÊN SÂU</span></div>
             <div><strong>{ADVANCED_LESSONS.reduce((sum, item) => sum + item.exercises.length, 0)}</strong><span>BÀI TẬP NHỚ LÂU</span></div>

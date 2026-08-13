@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { submitAnswer } from '../actions';
+import { addWeaknessLog } from '@/lib/local-learning-store';
+import { classifyError } from '@/lib/weakness-classifier';
 
 interface QuestionContent {
   passage?: string;
@@ -17,6 +18,7 @@ interface Question {
   question_type: string;
   content: QuestionContent;
   correct_answer: string;
+  explanation: string;
 }
 
 const LISTENING_SECONDS = 45 * 60;
@@ -47,24 +49,37 @@ export function MockTestSession({
   const [secondsLeft, setSecondsLeft] = useState(
     listening.length > 0 ? LISTENING_SECONDS : READING_SECONDS
   );
-  const [submitting, setSubmitting] = useState(false);
   const [results, setResults] = useState<{ correct: number; total: number } | null>(null);
 
   const questions = section === 'listening' ? listening : reading;
   const current = questions[index];
 
-  async function finishTest() {
-    setSubmitting(true);
+  function finishTest() {
     const allQuestions = [...listening, ...reading];
     let correct = 0;
     for (const q of allQuestions) {
       const userAnswer = answers[q.id];
       if (!userAnswer) continue;
-      const res = await submitAnswer(q.id, userAnswer);
-      if (res.correct) correct++;
+      if (userAnswer === q.correct_answer) {
+        correct++;
+      } else {
+        const diagnosis = classifyError({
+          questionType: q.question_type,
+          questionText: q.content.questionText,
+          passage: q.content.passage ?? q.content.audioTranscript,
+          choices: q.content.choices,
+          correctAnswer: q.correct_answer,
+          userAnswer,
+          explanation: q.explanation,
+        });
+        addWeaknessLog({
+          skill: q.part.startsWith('Listening') ? 'listening' : 'reading',
+          errorType: diagnosis.errorType,
+          note: diagnosis.note,
+        });
+      }
     }
     setResults({ correct, total: allQuestions.length });
-    setSubmitting(false);
     setSection('done');
   }
 
@@ -120,9 +135,7 @@ export function MockTestSession({
     return (
       <div className="rounded border border-neutral-200 p-6 text-center">
         <h1 className="text-xl font-semibold">Mock test complete</h1>
-        {submitting ? (
-          <p className="mt-2 text-neutral-600">Grading...</p>
-        ) : results ? (
+        {results ? (
           <p className="mt-2 text-neutral-600">
             {results.correct} / {results.total} correct
           </p>

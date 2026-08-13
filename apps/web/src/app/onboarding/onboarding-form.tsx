@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useTransition } from 'react';
-import { bulkMarkOnboarding } from './actions';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { saveOnboardingProgress } from '@/lib/local-learning-store';
 
 interface Word {
   id: string;
@@ -22,7 +23,7 @@ function firstDefinition(meanings: unknown): string {
 
 export function OnboardingForm({ words }: { words: Word[] }) {
   const [known, setKnown] = useState<Set<string>>(new Set());
-  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   function toggle(id: string) {
     setKnown((prev) => {
@@ -41,13 +42,11 @@ export function OnboardingForm({ words }: { words: Word[] }) {
     setKnown(new Set());
   }
 
-  function handleSubmit(formData: FormData) {
-    for (const w of words) {
-      formData.append(known.has(w.id) ? 'known' : 'unsure', w.id);
-    }
-    startTransition(() => {
-      bulkMarkOnboarding(formData);
-    });
+  function handleSubmit() {
+    const knownIds = words.filter((word) => known.has(word.id)).map((word) => word.id);
+    const unsureIds = words.filter((word) => !known.has(word.id)).map((word) => word.id);
+    saveOnboardingProgress(knownIds, unsureIds);
+    router.push('/review');
   }
 
   return (
@@ -88,10 +87,9 @@ export function OnboardingForm({ words }: { words: Word[] }) {
 
       <button
         type="submit"
-        disabled={isPending}
         className="mt-6 w-full rounded bg-neutral-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
       >
-        {isPending ? 'Saving...' : 'Save and continue'}
+        Save locally and continue
       </button>
     </form>
   );

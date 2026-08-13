@@ -1,11 +1,9 @@
 import Link from 'next/link';
-import { requireUser } from '@/lib/auth';
 import { TOEIC_PRACTICE_SETS } from '@/lib/toeic-practice-data';
 import { PracticeSession } from './practice-session';
 
 export default async function PracticePage({ searchParams }: { searchParams: Promise<{ skill?: string; part?: string }> }) {
   const params = await searchParams;
-  await requireUser();
   const skill = params.skill === 'reading' ? 'reading' : 'listening';
   const allowedParts = skill === 'listening' ? [1, 2, 3, 4] : [5, 6, 7];
   const requestedPart = Number(params.part);

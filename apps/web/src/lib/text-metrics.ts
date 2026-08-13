@@ -1,6 +1,6 @@
 // Rule-based text heuristics used to grade Speaking/Writing attempts and to
 // classify wrong-answer error types, without calling any paid API — this app
-// runs entirely on free-tier infrastructure (Supabase) plus the browser's
+// runs entirely on local application code plus the browser's
 // own Web Speech API for STT.
 //
 // These are proxies, not real NLP/ASR analysis. They cannot replace a human
