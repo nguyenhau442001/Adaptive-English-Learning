@@ -16,11 +16,13 @@ export interface FlashcardWord {
   difficulty: number;
 }
 
-// Placeholder rows that slipped into the seed data; never study these.
-const EXCLUDE_TERMS = new Set(['null-effect']);
+// Guard against any placeholder rows (definition literally "placeholder")
+// that might slip back into the seed data during future edits.
+const isPlaceholder = (w: (typeof toeicWordSeeds)[number]) =>
+  w.meanings.some((m) => /placeholder/i.test(m.definition));
 
 export const ALL_WORDS: FlashcardWord[] = toeicWordSeeds
-  .filter((w) => !EXCLUDE_TERMS.has(w.term))
+  .filter((w) => !isPlaceholder(w))
   .map((w) => ({
     id: wordId(w.term),
     term: w.term,
