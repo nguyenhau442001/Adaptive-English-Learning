@@ -1,27 +1,23 @@
 import Link from 'next/link';
-import { toeicWordSeeds } from '@aelearning/exam-profile-toeic';
-import { wordId } from '@/lib/local-learning-store';
-import { ReviewSession } from './review-session';
+import { DECKS } from '@/lib/flashcard-decks';
+import { FlashcardApp } from './flashcard-app';
 
-export default function ReviewPage() {
-  const words = toeicWordSeeds.map((word) => ({
-    id: wordId(word.term),
-    term: word.term,
-    ipa: word.ipa,
-    meanings: word.meanings,
-    examples: word.examples,
-  }));
+export const metadata = {
+  title: 'TOEIC Flashcards — Học từ vựng band 900+',
+};
+
+export default function FlashcardPage() {
+  const decks = DECKS.map((d) => ({ slug: d.slug, name: d.name, blurb: d.blurb, count: d.wordIds.length }));
 
   return (
-    <div className="mx-auto max-w-xl px-4 py-10">
+    <div className="mx-auto max-w-2xl px-4 py-8">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Review</h1>
+        <h1 className="text-2xl font-semibold">TOEIC Flashcards</h1>
         <Link href="/" className="text-sm text-blue-600 underline">
-          Dashboard
+          Đấu trường
         </Link>
       </div>
-
-      <ReviewSession words={words} />
+      <FlashcardApp decks={decks} />
     </div>
   );
 }

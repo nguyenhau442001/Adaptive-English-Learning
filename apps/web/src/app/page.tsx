@@ -5,7 +5,12 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import questionBank, { type ToeicQuestion } from '@/lib/question-bank';
 import { ADVANCED_LESSONS } from '@/lib/advanced-lessons';
+import { ALL_WORDS } from '@/lib/flashcard-decks';
+import { countDeck, getFlashcardState, getStreak } from '@/lib/flashcard-store';
 import styles from './page.module.css';
+
+const VOCAB_TOTAL = ALL_WORDS.length;
+const VOCAB_IDS = ALL_WORDS.map((w) => w.id);
 
 const SKILL_ZONES = [
   {
@@ -89,6 +94,14 @@ export default function ArenaPage() {
   const [battle, setBattle] = useState<Battle | null>(null);
   const [rankUp, setRankUp] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [vocab, setVocab] = useState<{ known: number; streak: number } | null>(null);
+
+  useEffect(() => {
+    queueMicrotask(() => {
+      const fs = getFlashcardState();
+      setVocab({ known: countDeck(VOCAB_IDS, fs).known, streak: getStreak(fs) });
+    });
+  }, []);
 
   useEffect(() => {
     const raw = window.localStorage.getItem('vu-dai-toeic-save');
@@ -285,6 +298,20 @@ export default function ArenaPage() {
                   <span>{ADVANCED_LESSONS.length} BÀI CHUYÊN SÂU · {ADVANCED_LESSONS.reduce((sum, lesson) => sum + lesson.exercises.length, 0)} BÀI TẬP</span>
                 </div>
                 <strong>VÀO HỌC <Icon name="arrow" /></strong>
+              </Link>
+
+              <Link href="/review" className={styles.advancedLabCard}>
+                <div className={styles.advancedLabIcon}><Icon name="book" /></div>
+                <div>
+                  <small>TỪ VỰNG · FLASHCARD BAND 900+</small>
+                  <h3>TOEIC Flashcards</h3>
+                  <p>Học từ vựng kiểu flashcard: lật thẻ, nghe phát âm, vuốt để đánh dấu đã nhớ — từ đủ khó cho 4 kỹ năng.</p>
+                  <span>
+                    {vocab ? `ĐÃ NHỚ ${vocab.known} / ${VOCAB_TOTAL} TỪ` : `${VOCAB_TOTAL} TỪ`}
+                    {vocab && vocab.streak > 0 ? ` · 🔥 ${vocab.streak} NGÀY` : ''}
+                  </span>
+                </div>
+                <strong>HỌC TỪ <Icon name="arrow" /></strong>
               </Link>
             </section>
           </div>
