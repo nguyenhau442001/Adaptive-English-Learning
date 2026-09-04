@@ -1,6 +1,14 @@
 import type { ToeicWordSeed } from '../src/types';
+import { part5WordSeeds } from './words.part5.seed';
+import { part6WordSeeds } from './words.part6.seed';
+import { part7WordSeeds } from './words.part7.seed';
+import { listeningWordSeeds } from './words.listening.seed';
+import { productiveWordSeeds } from './words.productive.seed';
+import { collocationWordSeeds } from './words.collocations.seed';
 
-export const toeicWordSeeds: ToeicWordSeed[] = [
+// Original hand-curated core. Newer batches live in the words.*.seed.ts
+// files merged below so each stays small enough to review in one pass.
+const coreWordSeeds: ToeicWordSeed[] = [
   {
     term: 'affect',
     ipa: '/əˈfɛkt/',
@@ -1976,15 +1984,6 @@ export const toeicWordSeeds: ToeicWordSeed[] = [
     difficultyForExam: 2,
   },
   {
-    term: 'null hypothesis vs void',
-    ipa: '/nʌl haɪˈpɒθəsɪs/',
-    meanings: [{ pos: 'note', definition: 'placeholder omitted; not used in this list' }],
-    examples: [{ sentence: 'placeholder' }],
-    skill: 'vocab',
-    context: 'Part 5',
-    difficultyForExam: 1,
-  },
-  {
     term: 'breach',
     ipa: '/briːtʃ/',
     meanings: [{ pos: 'n./v.', definition: 'a violation of a law, agreement, or code of conduct' }],
@@ -3516,13 +3515,28 @@ export const toeicWordSeeds: ToeicWordSeed[] = [
     context: 'Part 6',
     difficultyForExam: 4,
   },
-  {
-    term: 'null-effect',
-    ipa: '/nʌl ɪˈfɛkt/',
-    meanings: [{ pos: 'note', definition: 'placeholder unused' }],
-    examples: [{ sentence: 'placeholder unused' }],
-    skill: 'vocab',
-    context: 'Part 5',
-    difficultyForExam: 1,
-  },
 ];
+
+export const toeicWordSeeds: ToeicWordSeed[] = dedupeByTerm([
+  ...coreWordSeeds,
+  ...part5WordSeeds,
+  ...part6WordSeeds,
+  ...part7WordSeeds,
+  ...listeningWordSeeds,
+  ...productiveWordSeeds,
+  ...collocationWordSeeds,
+]);
+
+// First occurrence of a term wins, so the hand-curated core overrides any
+// later batch that happens to repeat a headword.
+function dedupeByTerm(seeds: ToeicWordSeed[]): ToeicWordSeed[] {
+  const seen = new Set<string>();
+  const out: ToeicWordSeed[] = [];
+  for (const seed of seeds) {
+    const key = seed.term.trim().toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(seed);
+  }
+  return out;
+}
