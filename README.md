@@ -23,6 +23,18 @@ npm run dev
 Mở [http://localhost:3000](http://localhost:3000). Không mở `vu-dai-toeic.html` bằng Live Server;
 đó chỉ là bản demo HTML cũ và không dùng chung asset pipeline với ứng dụng Next.js.
 
+## Flashcard từ vựng offline (`toeic-flashcards.html`)
+
+`toeic-flashcards.html` ở gốc repo là bản flashcard độc lập: toàn bộ ngân hàng từ được nhúng
+thẳng vào file, không cần `npm`, không tải file phụ. Copy file này sang máy hoặc thiết bị bất kỳ
+rồi mở bằng trình duyệt. Tiến độ lưu bằng `localStorage` riêng cho từng thiết bị.
+
+Sau khi sửa bất kỳ file `packages/exam-profiles/toeic/data/words.*.seed.ts`, dựng lại file bằng:
+
+```bash
+npx tsx tools/build-flashcards-html.mjs
+```
+
 ## Build production
 
 ```bash
