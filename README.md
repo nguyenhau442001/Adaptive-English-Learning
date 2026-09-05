@@ -1,72 +1,84 @@
 # Adaptive English Learning
 
-Ứng dụng học tiếng Anh local-first, gồm hai hướng luyện độc lập:
+Local-first English learning app with two independent tracks:
 
-- **Vũ Đài TOEIC**: Listening, Reading, Speaking và Writing theo format bài thi.
-- **Executive English Lab**: bài học C1–C2 cho software engineering tại môi trường tập đoàn kỹ
-  thuật quốc tế, tập trung vào IT systems, architecture, API integration, incident, requirements,
-  code review và release. Mỗi bài đi theo luồng học kiến thức → xem hội thoại mẫu → làm bài tập →
-  luyện lại câu sai.
+- **Vu Dai TOEIC**: Listening, Reading, Speaking and Writing following the exam format.
+- **Executive English Lab**: C1–C2 lessons for software engineers at international tech
+  companies, focused on IT systems, architecture, API integration, incidents, requirements,
+  code review and release. Each lesson follows the flow: learn concept → view sample
+  dialogue → do exercises → review mistakes.
 
-Không cần tài khoản, database, API key hay file `.env`. Nội dung được đóng gói trong repository;
-tiến độ, SRS từ vựng, lỗi thường gặp và điểm bài học được lưu bằng `localStorage` trên trình duyệt.
+No account, database, API key, or `.env` file needed. Content is bundled in the repository;
+progress, vocabulary SRS state, common mistakes, and lesson scores are stored via `localStorage`
+in the browser.
 
-## Chạy trên máy
+## Use it now (no install needed)
 
-Yêu cầu Node.js 22+.
+- Vu Dai TOEIC (static HTML demo): https://nguyenhau442001.github.io/Adaptive-English-Learning/
+- Offline vocabulary flashcards: https://nguyenhau442001.github.io/Adaptive-English-Learning/toeic-flashcards.html
+
+Both pages run as static sites on GitHub Pages and redeploy automatically whenever `main`
+updates the related files (see `.github/workflows/deploy-pages.yml`). For the full Next.js app
+(Executive English Lab, arena, SRS, etc.), run it locally following the instructions below.
+
+## Run locally
+
+Requires Node.js 22+.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Mở [http://localhost:3000](http://localhost:3000). Không mở `vu-dai-toeic.html` bằng Live Server;
-đó chỉ là bản demo HTML cũ và không dùng chung asset pipeline với ứng dụng Next.js.
+Open [http://localhost:3000](http://localhost:3000). Don't open `vu-dai-toeic.html` with Live
+Server; that's just the legacy HTML demo and doesn't share the asset pipeline with the Next.js app.
 
-## Flashcard từ vựng offline (`toeic-flashcards.html`)
+## Offline vocabulary flashcards (`toeic-flashcards.html`)
 
-`toeic-flashcards.html` ở gốc repo là bản flashcard độc lập: toàn bộ ngân hàng từ được nhúng
-thẳng vào file, không cần `npm`, không tải file phụ. Copy file này sang máy hoặc thiết bị bất kỳ
-rồi mở bằng trình duyệt. Tiến độ lưu bằng `localStorage` riêng cho từng thiết bị.
+`toeic-flashcards.html` at the repo root is a standalone flashcard build: the entire word bank
+is embedded directly in the file, no `npm` needed, no extra files to load. Copy this file to any
+machine or device and open it in a browser. Progress is stored via `localStorage`, separately per
+device.
 
-Sau khi sửa bất kỳ file `packages/exam-profiles/toeic/data/words.*.seed.ts`, dựng lại file bằng:
+After editing any `packages/exam-profiles/toeic/data/words.*.seed.ts` file, rebuild the file with:
 
 ```bash
 npx tsx tools/build-flashcards-html.mjs
 ```
 
-## Build production
+## Production build
 
 ```bash
 npm run build
 npm run start --workspace=web
 ```
 
-Không cần cấu hình biến môi trường khi deploy. Với Vercel, đặt **Root Directory** thành `apps/web`.
+No environment variables needed for deployment. On Vercel, set **Root Directory** to `apps/web`.
 
-## Dữ liệu được lưu ở đâu?
+## Where is data stored?
 
-Mọi dữ liệu cá nhân chỉ nằm trong trình duyệt hiện tại:
+All personal data lives only in the current browser:
 
-- tiến độ đấu trường và trang bị nhân vật;
-- bài Executive English đã học, điểm tốt nhất và số lần luyện;
-- trạng thái SRS của từ vựng;
-- Weakness Map được tạo từ câu trả lời sai.
+- arena progress and character equipment;
+- Executive English lessons completed, best scores, and practice count;
+- vocabulary SRS state;
+- Weakness Map generated from wrong answers.
 
-Xóa dữ liệu website trong trình duyệt sẽ đặt lại toàn bộ tiến độ. Dữ liệu không tự đồng bộ giữa
-các thiết bị hoặc trình duyệt.
+Clearing site data in the browser resets all progress. Data does not sync automatically across
+devices or browsers.
 
-## Nội dung và cách chấm
+## Content and scoring
 
-- Ngân hàng từ vựng, câu hỏi TOEIC và bài Executive English đều là dữ liệu cục bộ do dự án quản lý.
-- Listening dùng Speech Synthesis của trình duyệt.
-- Speaking dùng Web Speech API khi trình duyệt hỗ trợ.
-- Speaking/Writing được chấm bằng heuristic nội bộ dựa trên rubric; không gọi dịch vụ AI trả phí.
-- Điểm luyện tập là tín hiệu định hướng, không phải kết quả chính thức do ETS cấp.
+- The vocabulary bank, TOEIC questions, and Executive English lessons are all local data managed
+  by the project.
+- Listening uses the browser's Speech Synthesis.
+- Speaking uses the Web Speech API where the browser supports it.
+- Speaking/Writing are scored by an internal rubric-based heuristic; no paid AI service is called.
+- Practice scores are a directional signal, not an official ETS result.
 
-## Cấu trúc monorepo
+## Monorepo structure
 
-- `apps/web` — ứng dụng Next.js App Router.
-- `packages/vocab-core` — bộ máy SM-2 thuần TypeScript.
-- `packages/exam-profiles/toeic` — từ vựng, câu hỏi và taxonomy lỗi TOEIC.
-- `docs/architecture.md` — nguyên tắc kiến trúc local-first.
+- `apps/web` — Next.js App Router application.
+- `packages/vocab-core` — pure TypeScript SM-2 engine.
+- `packages/exam-profiles/toeic` — TOEIC vocabulary, questions, and error taxonomy.
+- `docs/architecture.md` — local-first architecture principles.
