@@ -14,12 +14,12 @@ in the browser.
 
 ## Use it now (no install needed)
 
-- Vu Dai TOEIC (static HTML demo): https://nguyenhau442001.github.io/Adaptive-English-Learning/
-- Offline vocabulary flashcards: https://nguyenhau442001.github.io/Adaptive-English-Learning/toeic-flashcards.html
+- TOEIC vocabulary flashcards: https://nguyenhau442001.github.io/Adaptive-English-Learning/
 
-Both pages run as static sites on GitHub Pages and redeploy automatically whenever `main`
-updates the related files (see `.github/workflows/deploy-pages.yml`). For the full Next.js app
-(Executive English Lab, arena, SRS, etc.), run it locally following the instructions below.
+This page runs as a static site on GitHub Pages and redeploys automatically whenever `main`
+updates `toeic-flashcards.html` (see `.github/workflows/deploy-pages.yml`). For the full
+Next.js app (Executive English Lab, arena, SRS, etc.), run it locally following the
+instructions below.
 
 ## Run locally
 
@@ -30,8 +30,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Don't open `vu-dai-toeic.html` with Live
-Server; that's just the legacy HTML demo and doesn't share the asset pipeline with the Next.js app.
+Open [http://localhost:3000](http://localhost:3000).
 
 ## Offline vocabulary flashcards (`toeic-flashcards.html`)
 
